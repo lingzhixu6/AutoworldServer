@@ -16,5 +16,3 @@ public class SQLiteJDBC {
         System.out.println("Database opened successfully");
     }
 }
-
-

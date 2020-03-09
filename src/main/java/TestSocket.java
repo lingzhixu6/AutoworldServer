@@ -20,14 +20,13 @@ public class TestSocket {
         try {
             serverSocket = new ServerSocket(serverPort);
             while (true) {
-                System.out.println("Server binds to port: " + serverPort);
                 Socket clientSocket = serverSocket.accept();
-                SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
-                System.out.println("Receive client IP: " + clientAddress);
+//                SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
+//                System.out.println("Receive client IP: " + clientAddress);
                 InputStream in = clientSocket.getInputStream();
                 OutputStream out = clientSocket.getOutputStream();
 
-                while ((recvMsgSize = in.read(receivBuf)) != -1) {
+                while ( (recvMsgSize = in.read(receivBuf)) != -1 ) {
                     String receivedData = new String(receivBuf, StandardCharsets.UTF_8);
                     System.out.println("Data sent from client: " + receivedData);
                     out.write(receivBuf, 0, recvMsgSize);
@@ -39,4 +38,28 @@ public class TestSocket {
         }
     }
 
+
+    public static void pushDataToClient(byte[] dataBuf) {
+        int serverPort = 4700;
+
+        ServerSocket serverSocket;
+
+        try {
+            serverSocket = new ServerSocket(serverPort);
+            while (true) {
+                System.out.println("Server binds to port: " + serverPort);
+                Socket clientSocket = serverSocket.accept();
+//                SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
+//                System.out.println("Receive client IP: " + clientAddress);
+                OutputStream out = clientSocket.getOutputStream();
+
+                out.write(dataBuf, 0, dataBuf.length);
+
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
