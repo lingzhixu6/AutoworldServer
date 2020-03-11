@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Database/SQLiteJDBC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/SQLiteJDBC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Factory/Factory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLogic/Factory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TestSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TestSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/TestSocket.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TestSocket.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Database/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/JavaBean/Player.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,6 +59,11 @@
     <property name="project.structure.side.proportion" value="0.23448277" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Software_Projects\AutoworldJavaServer\src\main\java\JavaBean" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -136,6 +132,7 @@
       <workItem from="1583763516930" duration="22078000" />
       <workItem from="1583833721430" duration="24288000" />
       <workItem from="1583878071092" duration="1766000" />
+      <workItem from="1583924934832" duration="946000" />
     </task>
     <servers />
   </component>
