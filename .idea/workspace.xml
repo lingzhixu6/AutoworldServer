@@ -2,21 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Watson_Java_SDK.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoworldJavaServer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoworldJavaServer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Database/AuthController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Database/DataBridge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Database/Player.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Database/SQLiteJDBC.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Factory/Factory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IBM/DiscoveryNews.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IBM/Test.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IBM/Test2.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TestSocket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Database/SQLiteJDBC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/SQLiteJDBC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Factory/Factory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GameLogic/Factory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TestSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TestSocket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TestSocket.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TestSocket.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,6 +33,9 @@
     </option>
     <expand />
     <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="AutoworldJavaServer" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -63,11 +62,12 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Watson-Java-SDK" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../FHIRtoSpeech" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.23448277" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.language" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -133,7 +133,9 @@
       <workItem from="1583684032746" duration="7810000" />
       <workItem from="1583747599768" duration="4786000" />
       <workItem from="1583763421460" duration="84000" />
-      <workItem from="1583763516930" duration="10132000" />
+      <workItem from="1583763516930" duration="22078000" />
+      <workItem from="1583833721430" duration="24288000" />
+      <workItem from="1583878071092" duration="1766000" />
     </task>
     <servers />
   </component>
@@ -152,16 +154,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jrt://D:/Directory2/IDE/IntelliJ IDEA 2019.2.3/jbr!/java.base/java/lang/Class.class</url>
-          <line>168</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
