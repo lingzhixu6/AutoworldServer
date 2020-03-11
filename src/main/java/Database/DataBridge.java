@@ -1,17 +1,44 @@
-//
-//
-//public class DataBridge {
-//    //private static bool _dataExists;
-//    private static DatabaseReference _rootReference = FirebaseDatabase.DefaultInstance.RootReference;
-//    private static readonly DataBridge _dataBridge;
-//    public static string playerEmail;  //playerID should be fetched from db first, then it can be used to retrieve other data
-//    public static Player currentPlayer;
-//    static string connection = "URI=file:" + "Assets/Scripts/Database/AutoWorldDb.db";
-//    private static SqliteConnection dbcon = new SqliteConnection(connection);
-//
-//    private DataBridge() {
-//        //FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://autoworld-2.firebaseio.com/");
-//
+package Database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DataBridge {
+    Connection c = null;
+    private void connectToDb() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            this.c = DriverManager.getConnection("jdbc:sqlite:AutoWorldDb.db");
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+    }
+
+    public void createTables(){
+        connectToDb();
+        try {
+            Statement cmnd = c.createStatement();
+            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER)";
+            String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+
+            cmnd.execute(q_createTableCompanyInfo);
+            cmnd.execute(q_createTablePlayerDetails);
+
+            c.close();
+
+        }
+        catch (Exception e){
+
+        }
+    }
+
+
+    public DataBridge() {
+
 //        // Open connect
 //        dbcon.Open();
 //
@@ -25,7 +52,7 @@
 //        dbcmd.CommandText = q_createTable;
 //        dbcmd.ExecuteReader();
 //        dbcon.Close();
-//    }
+    }
 //
 //    public static DataBridge GetInstance() {
 //        return new DataBridge();
@@ -129,69 +156,9 @@
 //        }
 //    }
 //
-//    // public static void InitPlayer()
-//    // {
-//    //     try
-//    //     {
-//    //         string id = "";
-//    //         string company = "";
-//    //         string email = "";
-//    //         dbcon.Open();
-//    //         // Read and print all values in table
-//    //         IDataReader reader;
-//    //         var cmnd = new SqliteCommand(dbcon);
-//    //         cmnd.CommandText = query;
-//    //         cmnd.Parameters.AddWithValue("@email", emailstr);
-//    //         cmnd.Prepare();
-//    //         reader = cmnd.ExecuteReader();
-//    //         while (reader.Read())
-//    //         {
-//    //             id = reader[0].ToString();
-//    //             company = reader[1].ToString();
-//    //             email = reader[2].ToString();
-//    //         }
-//    //
-//    //         currentPlayer = new Player(id, company, email);
-//    //         dbcon.Close();
-//    //     }
-//    //     catch (Exception ex)
-//    //     {
-//    //         EditorUtility.DisplayDialog("Error", ex.Message, "Close");
-//    //     }
-//    // }
 //
-//    public int GetPlayerBalance() {
-//        return -1;
-//    }
 //
-//    public void UpdatePlayerMaterialQty()        //Update = Get and Post
-//    {
-//    }
 //
-//    public void CreatePlayerWithEmailAndPassword(string email, string password) {
-//    }
 //
-//    public static string CreateSalt() {
-//        string salt = "";
-//        string saltset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=][}{<>"; //Choose random letters
-//        Debug.Log(saltset.Length);
-//        System.Random rnd = new System.Random();
-//        for (int i = 1; i <= 100; i++) {
-//            int random = rnd.Next(0, 81);
-//            salt += saltset[random];  //Create Salt
-//        }
-//
-//        return salt;
-//    }
-//
-//    public static string Hash(string password, string salt) {
-//        Byte[] toBytes = Encoding.UTF8.GetBytes(password + salt);
-//        using(HashAlgorithm TypeOfHash = new SHA512Managed())
-//        {
-//            Byte[] hashbytes = TypeOfHash.ComputeHash(toBytes);
-//            string HashedPassword = Convert.ToBase64String(hashbytes);
-//            return HashedPassword;
-//        }
-//
-//    }
-//}
+
+}

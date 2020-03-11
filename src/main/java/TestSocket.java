@@ -1,3 +1,4 @@
+import Database.DataBridge;
 import IBM.DiscoveryNews;
 
 import java.net.*;
@@ -6,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 
 public class TestSocket {
@@ -30,11 +32,11 @@ public class TestSocket {
                 if ( in.read(receivBuf) != -1 )  //read from input stream and stores into buffer. Return -1 when reaching the end of inputstream
                 {
                     String receivedData = new String(receivBuf, StandardCharsets.UTF_8).trim();
-                    if (receivedData.charAt(0) == '^')  //a special symbol which indicates the data received is asking for some resource. E.g. Discovery news
-                        switchResponse(receivedData);
-                    else {
-                        break;
-                    }
+                    System.out.println(receivedData);
+                    String[] splitCode =  receivedData.split(",", 2);
+                    System.out.println(Arrays.toString(splitCode));
+                    System.out.println(splitCode.length);
+                    switchResponse(splitCode);
                 }
                 clientSocket.close();
             }
@@ -43,13 +45,18 @@ public class TestSocket {
         }
     }
 
-    private void switchResponse(String receivedData) throws IOException {
+    private void switchResponse(String[] receivedData) throws IOException {
         OutputStream out = clientSocket.getOutputStream();
-
-        switch (receivedData.substring(1)) {
+        DataBridge d = new DataBridge();
+        String opCode = receivedData[0];
+        String data = receivedData[1];
+        switch (opCode) {
             case "news":
                 out.write(new DiscoveryNews().queryNewsAndGetDesiredResult());
                 break;
+            case "0000":
+                d.createTables();
+
             default:
                 break;
         }

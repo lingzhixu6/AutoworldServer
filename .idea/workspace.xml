@@ -2,10 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Database/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/JavaBean/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoWorldDb.db" beforeDir="false" afterPath="$PROJECT_DIR$/AutoWorldDb.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/AutoworldJavaServer/META-INF/AutoworldJavaServer.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Database/SQLiteJDBC.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TestSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TestSocket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Database/SQLiteJDBC.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/AutoworldJavaServer.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TestSocket.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/TestSocket.class" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,11 +58,23 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../FHIRtoSpeech" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.23448277" />
@@ -64,18 +85,6 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Software_Projects\AutoworldJavaServer\src\main\java\JavaBean" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -113,6 +122,18 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -133,6 +154,8 @@
       <workItem from="1583833721430" duration="24288000" />
       <workItem from="1583878071092" duration="1766000" />
       <workItem from="1583924934832" duration="946000" />
+      <workItem from="1583946270270" duration="103000" />
+      <workItem from="1583946443964" duration="6356000" />
     </task>
     <servers />
   </component>
@@ -151,5 +174,27 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="569" y="357" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1583946484543">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="569" y="357" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.23.1440.877@0.23.1440.877" timestamp="1583946484543" />
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1583953390867">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1583953390867" />
+    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1583953390866">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1583953390866" />
+    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1583953390863">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1583953390863" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1583953390867">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1583953390867" />
   </component>
 </project>
