@@ -1,6 +1,7 @@
 import Database.DataBridge;
 import IBM.DiscoveryNews;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import java.net.*;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class TestSocket {
 
     Socket clientSocket;
@@ -23,11 +23,12 @@ public class TestSocket {
 
         int serverPort = 4700;
         ServerSocket serverSocket = null;
-        byte[] receivBuf = new byte[8792];
+
 
         try {
             serverSocket = new ServerSocket(serverPort);
             while (true) {
+                byte[] receivBuf = new byte[10000];
                 clientSocket = serverSocket.accept();
 //                SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
 //                System.out.println("Receive client IP: " + clientAddress);
@@ -65,8 +66,8 @@ public class TestSocket {
             case "0000":
                 d.createTables();
                 break;
-            case "0001":
-                HashMap details = ParseJson(receivedData[1]);
+            case "0001":{
+                HashMap details = ParseJson(data);
                 String email = details.get("email").toString();
                 String company = details.get("company").toString();
                 String password = details.get("hashedPassword").toString();
@@ -78,9 +79,9 @@ public class TestSocket {
                 else{
                     out.write("0".getBytes(StandardCharsets.UTF_8));
                 }
-                break;
-            case "0002":
-                HashMap authDetails = ParseJson(receivedData[1]);
+                break;}
+            case "0002":{
+                HashMap authDetails = ParseJson(data);
                 String authEmail = authDetails.get("email").toString();
                 String authPassword = authDetails.get("password").toString();
                 boolean AuthStatus = d.AuthPlayer(authEmail, authPassword);
@@ -91,6 +92,27 @@ public class TestSocket {
                     out.write("0".getBytes(StandardCharsets.UTF_8));
                 }
                 break;
+            }
+            case "0003":{
+                HashMap details = ParseJson(data);
+                String loggedInEmail = details.get("email").toString();
+                out.write(d.companyDetails(loggedInEmail).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "5000": {
+                HashMap EmployeeDetails = ParseJson(receivedData[1]);
+                int companyId = Integer.parseInt(EmployeeDetails.get("CompanyId").toString());
+                String Records = d.GetEmployeeRecords(companyId);
+                out.write(Records.getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "5001":{
+                HashMap EmployeeDetails = ParseJson(receivedData[1]);
+                int companyId = Integer.parseInt(EmployeeDetails.get("CompanyId").toString());
+                String type = EmployeeDetails.get("EmployeeType").toString();
+                d.IncrementEmployeeQuantity(companyId, type);
+                break;
+            }
             default:
                 break;
         }
