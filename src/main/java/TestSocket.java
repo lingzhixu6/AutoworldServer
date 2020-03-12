@@ -1,7 +1,6 @@
 import Database.DataBridge;
 import IBM.DiscoveryNews;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 
 import java.net.*;
 import java.io.IOException;
@@ -23,7 +22,6 @@ public class TestSocket {
 
         int serverPort = 4700;
         ServerSocket serverSocket = null;
-
 
         try {
             serverSocket = new ServerSocket(serverPort);

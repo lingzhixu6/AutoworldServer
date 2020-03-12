@@ -1,7 +1,6 @@
 package Database;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -32,9 +31,12 @@ public class DataBridge {
             Statement cmnd = c.createStatement();
             String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER)";
             String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
-
+            String q_createTableEmployees = "CREATE TABLE IF NOT EXISTS Employees (id INTEGER PRIMARY KEY, JobType VARCHAR, HourlyPay INTEGER)";
+            String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
             cmnd.execute(q_createTableCompanyInfo);
             cmnd.execute(q_createTablePlayerDetails);
+            cmnd.execute(q_createTableEmployees);
+            cmnd.execute(q_createTableEmployeeRecords);
 
             c.close();
 
@@ -43,6 +45,9 @@ public class DataBridge {
             c.close();
         }
     }
+
+
+
 
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
         connectToDb();
@@ -279,37 +284,12 @@ public class DataBridge {
         }
     }
 
-    public static String CreateSalt() {
-        String salt = "";
-        String saltset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=][}{<>"; //Choose random letters
-        Random rnd = new Random();
-        for (int i = 1; i <= 100; i++) {
-            int random = rnd.nextInt(82);
-            salt += Character.toString(saltset.charAt(random));  //Create Salt
-        }
 
-        return salt;
-    }
+
 
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//        Byte[] toBytes = Encoding.UTF8.GetBytes(password + salt);
-//        using(HashAlgorithm TypeOfHash = new SHA512Managed())
-//        {
-//            Byte[] hashbytes = TypeOfHash.ComputeHash(toBytes);
-//            string HashedPassword = Convert.ToBase64String(hashbytes);
-//            return HashedPassword;
-//        }
+
         String input = password + salt;
-//        MessageDigest md = MessageDigest.getInstance("SHA-512");
-//        md.update(str.getBytes(StandardCharsets.UTF_8));
-//        byte byteData[] = md.digest();
-//
-//        //convert the byte to hex format method 1
-//        StringBuffer hashCodeBuffer = new StringBuffer();
-//        for (int i = 0; i < byteData.length; i++) {
-//            hashCodeBuffer.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-//        }
-//        return hashCodeBuffer.toString();
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         byte [] inputBytes = input.getBytes(StandardCharsets.UTF_8);
