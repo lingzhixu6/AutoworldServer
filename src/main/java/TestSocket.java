@@ -1,5 +1,6 @@
 import Database.DataBridge;
 import IBM.DiscoveryNews;
+import com.google.gson.Gson;
 
 import java.net.*;
 import java.io.IOException;
@@ -7,7 +8,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class TestSocket {
@@ -32,20 +37,23 @@ public class TestSocket {
                 if ( in.read(receivBuf) != -1 )  //read from input stream and stores into buffer. Return -1 when reaching the end of inputstream
                 {
                     String receivedData = new String(receivBuf, StandardCharsets.UTF_8).trim();
-                    System.out.println(receivedData);
                     String[] splitCode =  receivedData.split(",", 2);
                     System.out.println(Arrays.toString(splitCode));
-                    System.out.println(splitCode.length);
                     switchResponse(splitCode);
                 }
                 clientSocket.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void switchResponse(String[] receivedData) throws IOException {
+    private HashMap ParseJson(String json){
+        Gson g = new Gson();
+        return g.fromJson(json, HashMap.class);
+    }
+
+    private void switchResponse(String[] receivedData) throws IOException, SQLException {
         OutputStream out = clientSocket.getOutputStream();
         DataBridge d = new DataBridge();
         String opCode = receivedData[0];
@@ -56,7 +64,33 @@ public class TestSocket {
                 break;
             case "0000":
                 d.createTables();
-
+                break;
+            case "0001":
+                HashMap details = ParseJson(receivedData[1]);
+                String email = details.get("email").toString();
+                String company = details.get("company").toString();
+                String password = details.get("hashedPassword").toString();
+                String salt = details.get("salt").toString();
+                boolean RegisterStatus = d.WritePlayer(email, company, password, salt);
+                if (RegisterStatus){
+                    out.write("1".getBytes(StandardCharsets.UTF_8));
+                }
+                else{
+                    out.write("0".getBytes(StandardCharsets.UTF_8));
+                }
+                break;
+            case "0002":
+                HashMap authDetails = ParseJson(receivedData[1]);
+                String authEmail = authDetails.get("email").toString();
+                String authPassword = authDetails.get("password").toString();
+                boolean AuthStatus = d.AuthPlayer(authEmail, authPassword);
+                if (AuthStatus){
+                    out.write("1".getBytes(StandardCharsets.UTF_8));
+                }
+                else{
+                    out.write("0".getBytes(StandardCharsets.UTF_8));
+                }
+                break;
             default:
                 break;
         }

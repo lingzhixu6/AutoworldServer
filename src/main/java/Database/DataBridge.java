@@ -1,9 +1,13 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
+import java.util.Base64;
+import java.util.Random;
 
 public class DataBridge {
     Connection c = null;
@@ -18,7 +22,7 @@ public class DataBridge {
 
     }
 
-    public void createTables(){
+    public void createTables() throws SQLException {
         connectToDb();
         try {
             Statement cmnd = c.createStatement();
@@ -32,100 +36,81 @@ public class DataBridge {
 
         }
         catch (Exception e){
-
+            c.close();
         }
     }
 
 
-    public DataBridge() {
 
-//        // Open connect
-//        dbcon.Open();
-//
-//        // Create table
-//        IDbCommand dbcmd;
-//        dbcmd = dbcon.CreateCommand();
-//        string q_createTable = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds REAL, LoanAmount REAL, Revenue REAL, Costs REAL, CarsSold INTEGER)";
-//        dbcmd.CommandText = q_createTable;
-//        dbcmd.ExecuteReader();
-//        q_createTable = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
-//        dbcmd.CommandText = q_createTable;
-//        dbcmd.ExecuteReader();
-//        dbcon.Close();
+
+    public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
+        connectToDb();
+        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold) VALUES (?, 0, 0, 0, 0, 0, 0, 0)";
+        String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
+        String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement pstmt = c.prepareStatement(InitialiseCompanyDetailsstmt);
+            pstmt.setString(1, companystr);
+            pstmt.executeUpdate(); //Initialise Company Details
+
+            PreparedStatement stmt  = c.prepareStatement(GetCompanyIdstmt);
+            stmt.setString(1, companystr);
+            ResultSet rs    = stmt.executeQuery();
+            int companyId = -1;
+            // loop through the result set
+            while (rs.next()) {
+                companyId = rs.getInt("id");
+            }
+
+            PreparedStatement createPlayerDetails = c.prepareStatement(InitialisePlayerDetailsstmt);
+            createPlayerDetails.setInt(1, companyId);
+            createPlayerDetails.setString(2, emailstr);
+            createPlayerDetails.setString(3, password);
+            createPlayerDetails.setString(4, salt);
+            createPlayerDetails.executeUpdate(); //Initialise Company DetailsPreparedStatement pstmt = c.prepareStatement(InitialiseCompanyDetailsstmt);
+            c.close();
+            return true;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            c.close();
+            return false;
+        }
+
+
     }
-//
-//    public static DataBridge GetInstance() {
-//        return new DataBridge();
-//    }
-//
-//
-//    public static bool WritePlayer(string emailstr, string companystr, string password) {
-//        try {
-//            string saltstr = CreateSalt();
-//
-//            password = Hash(password, saltstr);
-//
-//            dbcon.Open();
-//            var cmnd = new SqliteCommand(dbcon);
-//            cmnd.CommandText = "INSERT INTO (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold) VALUES (@companyname, 0, 0, 0.0, 0.0, 0.0, 0.0, 0)";
-//            cmnd.Parameters.AddWithValue("@companyname", companystr);
-//            cmnd.Prepare();
-//            cmnd.ExecuteNonQuery(); //Initialise Company Details
-//            cmnd.CommandText = "SELECT id FROM CompanyInfo WHERE Company = @companyname";
-//            cmnd.Parameters.AddWithValue("@companyname", companystr);
-//            cmnd.Prepare();
-//            IDataReader reader = cmnd.ExecuteReader();
-//            int companyId = -1;
-//            while (reader.Read()) {
-//                companyId = Convert.ToInt32(reader[0]); //Get Company Id
-//            }
-//            cmnd.CommandText = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (@Id, @email, @password, @salt)";
-//            cmnd.Parameters.AddWithValue("@Id", companyId);
-//            cmnd.Parameters.AddWithValue("@email", emailstr);
-//            cmnd.Parameters.AddWithValue("@password", password);
-//            cmnd.Parameters.AddWithValue("@salt", saltstr);
-//            cmnd.Prepare();
-//            cmnd.ExecuteNonQuery(); //Create Player
-//            dbcon.Close();
-//            return true;
-//        } catch (Exception ex) {
-//            EditorUtility.DisplayDialog("Error", ex.Message, "Close");
-//            return false;
-//        }
-//
-//
-//    }
-//
-//    public static bool AuthPlayer(string emailstr, string inputPassword) {
-//        try {
-//            dbcon.Open();
-//            // Read and print all values in table
-//            IDataReader reader;
-//            string query = "SELECT Password, Salt FROM PlayerDetails where Email = @email";
-//            var cmnd = new SqliteCommand(dbcon);
-//            cmnd.CommandText = query;
-//            cmnd.Parameters.AddWithValue("@email", emailstr);
-//            cmnd.Prepare();
-//            reader = cmnd.ExecuteReader();
-//
-//            while (reader.Read()) {
-//                string salt = reader[1].ToString();
-//                string userPassword = reader[0].ToString();
-//                inputPassword = Hash(inputPassword, salt);
-//                if (inputPassword.Equals(userPassword)) {
-//                    dbcon.Close();
-//                    return true;
-//                }
-//            }
-//            dbcon.Close();
-//            return false;
-//
-//        } catch (Exception ex) {
-//            EditorUtility.DisplayDialog("Error", ex.Message, "Close");
-//            dbcon.Close();
-//            return false;
-//        }
-//    }
+
+    public boolean AuthPlayer(String emailstr, String inputPassword) throws SQLException {
+        connectToDb();
+        String SelectPasswordstmt = "SELECT Password, Salt FROM PlayerDetails where Email = ?";
+        try {
+            // Read and print all values in table
+            PreparedStatement stmt  = c.prepareStatement(SelectPasswordstmt);
+            stmt.setString(1, emailstr);
+            ResultSet rs = stmt.executeQuery();
+            int companyId = -1;
+            // loop through the result set
+            while (rs.next()) {
+                String salt = rs.getString("Salt");
+                String userPassword = rs.getString("Password");
+                System.out.println(userPassword);
+                inputPassword = Hash(inputPassword, salt);
+                System.out.println(inputPassword);
+                if (inputPassword.equals(userPassword)){
+                    c.close();
+                    return true;
+                }
+            }
+
+            c.close();
+            return false;
+
+
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
 //
 //    public static Player ReadPlayer(string emailstr) {
 //        try {
@@ -161,4 +146,42 @@ public class DataBridge {
 //
 //
 
+
+    public static String CreateSalt() {
+        String salt = "";
+        String saltset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=][}{<>"; //Choose random letters
+        Random rnd = new Random();
+        for (int i = 1; i <= 100; i++) {
+            int random = rnd.nextInt(82);
+            salt += Character.toString(saltset.charAt(random));  //Create Salt
+        }
+
+        return salt;
+    }
+
+    public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+//        Byte[] toBytes = Encoding.UTF8.GetBytes(password + salt);
+//        using(HashAlgorithm TypeOfHash = new SHA512Managed())
+//        {
+//            Byte[] hashbytes = TypeOfHash.ComputeHash(toBytes);
+//            string HashedPassword = Convert.ToBase64String(hashbytes);
+//            return HashedPassword;
+//        }
+        String input = password + salt;
+//        MessageDigest md = MessageDigest.getInstance("SHA-512");
+//        md.update(str.getBytes(StandardCharsets.UTF_8));
+//        byte byteData[] = md.digest();
+//
+//        //convert the byte to hex format method 1
+//        StringBuffer hashCodeBuffer = new StringBuffer();
+//        for (int i = 0; i < byteData.length; i++) {
+//            hashCodeBuffer.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+//        }
+//        return hashCodeBuffer.toString();
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        byte [] inputBytes = input.getBytes(StandardCharsets.UTF_8);
+        byte[] digest = md.digest(inputBytes);
+        return Base64.getEncoder().encodeToString(digest);
+    }
 }
