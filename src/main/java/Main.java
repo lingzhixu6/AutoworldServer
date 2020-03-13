@@ -8,7 +8,7 @@ public class Main {
         InetAddress ip = InetAddress.getLocalHost();
         System.out.println(ip.getHostAddress());
 
-        new TestSocket().run();
+        new MTSock().run();
     }
 
 }

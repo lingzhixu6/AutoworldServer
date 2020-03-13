@@ -2,48 +2,52 @@ import Database.DataBridge;
 import IBM.DiscoveryNews;
 import com.google.gson.Gson;
 
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
-public class TestSocket {
+public class ClientThread extends Thread {
 
+    DataOutputStream outStream;
+    DataInputStream inStream;
     Socket clientSocket;
+    int clientNo;
+
+
+
+    ClientThread(Socket inSocket, int counter) {
+        clientSocket = inSocket;
+        clientNo = counter;
+    }
 
     public void run() {
-
-        int serverPort = 4700;
-        ServerSocket serverSocket = null;
-
         try {
-            serverSocket = new ServerSocket(serverPort);
-            while (true) {
-                byte[] receivBuf = new byte[10000];
-                clientSocket = serverSocket.accept();
-//                SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
-//                System.out.println("Receive client IP: " + clientAddress);
-                InputStream in = clientSocket.getInputStream();
+            byte[] receivBuf = new byte[10000];
+            inStream = new DataInputStream(clientSocket.getInputStream());
+            outStream = new DataOutputStream(clientSocket.getOutputStream());
 
-                //不能使用while。我现在只能实现一问一答的模式。这里默认read一次就可以把client的消息全部读进buffer
-                if ( in.read(receivBuf) != -1 )  //read from input stream and stores into buffer. Return -1 when reaching the end of inputstream
-                {
-                    String receivedData = new String(receivBuf, StandardCharsets.UTF_8).trim();
-                    String[] splitCode =  receivedData.split(",", 2);
-                    System.out.println(Arrays.toString(splitCode));
-                    switchResponse(splitCode);
-                }
-                clientSocket.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            inStream.read(receivBuf);
+            String clientMsg = new String(receivBuf, StandardCharsets.UTF_8).trim();
+
+            String receivedData = new String(receivBuf, StandardCharsets.UTF_8).trim();
+            String[] splitCode =  receivedData.split(",", 2);
+            System.out.println(Arrays.toString(splitCode));
+            switchResponse(splitCode);
+
+            inStream.close();
+            outStream.close();
+            clientSocket.close();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        } finally {
+            System.out.println("Client: " + clientNo + " exit!! ");
+            System.out.println();       //To separate print statements made by different clients
         }
     }
 
@@ -51,14 +55,13 @@ public class TestSocket {
         Gson g = new Gson();
         return g.fromJson(json, HashMap.class);
     }
-
     private void switchResponse(String[] receivedData) throws IOException, SQLException {
         OutputStream out = clientSocket.getOutputStream();
         DataBridge d = new DataBridge();
         String opCode = receivedData[0];
         String data = receivedData[1];
         switch (opCode) {
-            case "news":
+            case "0010":
                 out.write(new DiscoveryNews().queryNewsAndGetDesiredResult());
                 break;
             case "0000":
@@ -111,9 +114,28 @@ public class TestSocket {
                 d.IncrementEmployeeQuantity(companyId, type);
                 break;
             }
+            case "5002":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int companyId = Integer.parseInt(Details.get("CompanyId").toString());
+                String materialname = Details.get("Name").toString();
+                int price = Integer.parseInt(Details.get("Price").toString());
+                int quantity = Integer.parseInt(Details.get("Quantity").toString());
+                d.BuyRawMaterials(companyId, materialname, price, quantity);
+                break;
+            }
+            case "5005":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int companyId = Integer.parseInt(Details.get("CompanyId").toString());
+                int repaymentAmount = Integer.parseInt(Details.get("LoanAmount").toString());
+                d.RepayLoan(companyId, repaymentAmount);
+                break;
+            }
             default:
                 break;
         }
     }
 
+    private String extractOpcode(String clientMsg) {
+        return clientMsg.substring(0,4);
+    }
 }
