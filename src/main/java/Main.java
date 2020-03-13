@@ -1,4 +1,4 @@
-import IBM.DiscoveryNews;
+import Database.DataBridge;
 
 public class Main {
 
@@ -6,7 +6,7 @@ public class Main {
 //        InetAddress ip = InetAddress.getLocalHost();
 //        System.out.println(ip.getHostAddress());
 
-        new TestSocket().run();
+        DataBridge dataBridge = new DataBridge();
+        dataBridge.createSqlTables();
     }
-
 }

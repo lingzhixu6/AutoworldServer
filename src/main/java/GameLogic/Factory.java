@@ -1,67 +1,82 @@
-//using System.Threading;
+//package GameLogic;
 //
-//
-//public class Factory    //This game logic should be deployed in servers. In case data are corrupted by users.
+//public class Factory
 //{
-//    private Thread ManufactureMonitoringThread;
-//    void ReceiveClientRequest()
-//    {
-//        //Get user identifier here
-//    }
+//    private Thread ManufactureSimulationThread;
 //
 //
-//    void ManufactureAutoCars(string userIdentifier)
+//    private void ManufactureAutoCars(String userIndex)
 //    {
 //        //consume certain amount of raw material and labour here
-//        if (CheckIfEnoughMaterial(userIdentifier) && CheckIfEnoughEmployee(userIdentifier))
+//        //When the manufacture is done, update db about the latest user
+//        if (CheckIfEnoughMaterial(userIndex) && CheckIfEnoughEmployee(userIndex))
 //        {
-//            RemoveRequiredMaterialAmountFromDb(userIdentifier);
-//            ChangeEmployeeStateAtDb(userIdentifier);
+//            RemoveRequiredMaterialAmountFromDb(userIndex);
+//            ChangeEmployeeStateAtDb(userIndex);
 //            //produce car here, set completion time --2h-- here
-//            ManufactureMonitoringThread = new Thread(ManufactureSimulation);
-//            ManufactureMonitoringThread.Start();
+//            ManufactureSimulationThread = new FactoryThread();
+//            ManufactureSimulationThread.start();
 //        }
 //        else
 //        {
 //            //Unity display a pop up window
 //        }
-//
 //    }
 //
-//    void ManufactureSimulation()
-//    {
-//        //Completion time is fixed to 2h for now
-//        int twoHoursInMs = 7200000;
-//        Thread.Sleep(twoHoursInMs);
-//    }
 //
-//    void RemoveRequiredMaterialAmountFromDb(string userIdentifier)
+//    private void RemoveRequiredMaterialAmountFromDb(String userIndex)
 //    {
 //
 //    }
 //
-//    void ChangeEmployeeStateAtDb(string userIdentifier)
+//    private void ChangeEmployeeStateAtDb(String userIndex)
 //    {
 //        //change the state of employee in db, from "spare" to "working"
 //    }
 //
-//    bool CheckIfEnoughMaterial(string userIdentifier)
+//    private boolean CheckIfEnoughMaterial(String userIndex)
 //    {
 //        return false;
 //    }
 //
-//    bool CheckIfEnoughEmployee(string userIdentifier)
+//    private boolean CheckIfEnoughEmployee(String userIndex)
 //    {
 //        return false;
 //    }
 //
-//    string CheckManufactureState()
+//    private String CheckManufactureState()
 //    {
-//        string threadStatus = ManufactureMonitoringThread.ThreadState.ToString();
-//        if (threadStatus.Equals("terminated"))
-//            return "Finished";
-//        return "Manufacturing";
+//        //query the db and return remaining time
+//        //this method should be called in Update() in Unity
+//
 //    }
+//
 //}
 //
+//class FactoryThread extends Thread {
+//    public void run() {
+//        int oneMinInMs = 60000;
+//        int twoHoursInMin = 120;
+//        while(twoHoursInMin > 0) {
+//            try {
+//                Thread.sleep(oneMinInMs);
+//            } catch (InterruptedException e) {
+//                //Tell unity that factory cannot manufacture now.
+//            }
+//            twoHoursInMin--;
+//            changeRemainingCarManuTime();
+//        }
+//        changeCarNumAtDb();
+//    }
+//
+//
+//    private void changeCarNumAtDb(String userIndex) {
+//
+//    }
+//
+//    private void changeRemainingCarManuTime(String userIndex) {
+//
+//    }
+//
+//}
 //
