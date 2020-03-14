@@ -1,5 +1,6 @@
 package Database;
 
+import com.google.gson.Gson;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -8,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Base64;
 import java.util.Random;
+import java.util.HashMap;
 
 public class DataBridge {
 
@@ -29,25 +31,21 @@ public class DataBridge {
     }
 
     //This method should be called once only. I.e. when the server starts/restarts. So it should only be called in main method.
-    public void createSqlTables() throws SQLException {
+    public void createTables() throws SQLException {
         try {
             Statement cmnd = c.createStatement();
-            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (CompanyId INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER)";
-            String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (PlayerId INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(CompanyId))";
-            String q_createTableFactory = "CREATE TABLE IF NOT EXISTS Factory (PlayerId INTEGER, CarInManu INTEGER, CarManued INTEGER, FOREIGN KEY(PlayerId) REFERENCE PlayerDetails(PlayerId), carInManu INTEGER, carManued INTEGER, );";
-            String q_createTableMaterial = "CREATE TABLE IF NOT EXISTS Material (PlayerId INTEGER, SteelStock INTEGER, GlassStock INTEGER, AluminumStock INTEGER, RubberStock INTEGER, FOREIGN KEY PlayerId REFERENCE PlayerDetails(PlayerId))";
-            String q_createTableEmployee = "CREATE TABLE IF NOT EXISTS Employee (PlayerId INTEGER, WorkerAtWork INTEGER, WorkerAvailable INTEGER, FOREIGN KEY(PlayerId) REFERENCE PlayerDetails(PlayerId))";
-
+            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER)";
+            String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+            String q_createTableEmployees = "CREATE TABLE IF NOT EXISTS Employees (id INTEGER PRIMARY KEY, JobType VARCHAR, HourlyPay INTEGER)";
+            String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
             cmnd.execute(q_createTableCompanyInfo);
             cmnd.execute(q_createTablePlayerDetails);
-            cmnd.execute(q_createTableFactory);
-            cmnd.execute(q_createTableMaterial);
-            cmnd.execute(q_createTableEmployee);
+            cmnd.execute(q_createTableEmployees);
+            cmnd.execute(q_createTableEmployeeRecords);
 
             c.close();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception e){
             c.close();
         }
     }
@@ -56,8 +54,7 @@ public class DataBridge {
 
 
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
-        connectToDb();
-        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold) VALUES (?, 0, 0, 0, 0, 0, 0, 0)";
+        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
         try {
@@ -92,7 +89,6 @@ public class DataBridge {
     }
 
     public boolean AuthPlayer(String emailstr, String inputPassword) throws SQLException {
-        connectToDb();
         String SelectPasswordstmt = "SELECT Password, Salt FROM PlayerDetails where Email = ?";
         try {
             // Read and print all values in table
@@ -104,26 +100,72 @@ public class DataBridge {
             while (rs.next()) {
                 String salt = rs.getString("Salt");
                 String userPassword = rs.getString("Password");
-                System.out.println(userPassword);
                 inputPassword = Hash(inputPassword, salt);
-                System.out.println(inputPassword);
                 if (inputPassword.equals(userPassword)){
                     c.close();
                     return true;
                 }
             }
-
             c.close();
             return false;
-
-
         } catch (Exception ex) {
             c.close();
             System.out.println(ex.getMessage());
             return false;
         }
     }
-//
+
+    public String companyDetails(String email){
+        String getCompanyIDQuery = "SELECT CompanyId, id FROM PlayerDetails where Email = ?";
+        String getCompanyDetails = "SELECT * FROM CompanyInfo where id = ?";
+        try {
+            PreparedStatement statement = c.prepareStatement(getCompanyIDQuery);
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            String companyId = resultSet.getString("CompanyId");
+            String userID = resultSet.getString("id");
+
+
+            statement = c.prepareStatement(getCompanyDetails);
+            statement.setString(1, companyId);
+            ResultSet companyResultSet = statement.executeQuery();
+
+            companyResultSet.next();
+
+            String companyID = companyResultSet.getString(1);
+            String companyName = companyResultSet.getString(2); // company name
+            String empHappiness =  companyResultSet.getString(3); // employee happ
+            String brandLoyalty = companyResultSet.getString(4); // brand loyalty
+            String funds = companyResultSet.getString(5); // funds
+            String loans = companyResultSet.getString(6); // loans
+            String revenue = companyResultSet.getString(7); // revenue
+            String costs = companyResultSet.getString(8); // costs
+            String carsSold = companyResultSet.getString(9); // cars sold
+            String currentLevel = companyResultSet.getString((10)); // level
+            String xp = companyResultSet.getString(11); // xp
+
+            HashMap<String, String> companyDetailsMap = new HashMap<>();
+            companyDetailsMap.put("Company Name", companyName);
+            companyDetailsMap.put("Company ID", companyID);
+            companyDetailsMap.put("Employee Happiness", empHappiness);
+            companyDetailsMap.put("Brand Loyalty", brandLoyalty);
+            companyDetailsMap.put("Funds", funds);
+            companyDetailsMap.put("Loans", loans);
+            companyDetailsMap.put("Revenue", revenue);
+            companyDetailsMap.put("Costs", costs);
+            companyDetailsMap.put("Cars Sold", carsSold);
+            companyDetailsMap.put("User ID", userID);
+            companyDetailsMap.put("Current Level", currentLevel);
+            companyDetailsMap.put("XP", xp);
+
+            return new Gson().toJson(companyDetailsMap);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "";
+        }
+    }
+
 //    public static Player ReadPlayer(string emailstr) {
 //        try {
 //            string id = "";
@@ -152,65 +194,106 @@ public class DataBridge {
 //            return null;
 //        }
 //    }
-//
-//
-//
-//
-//
 
 
-    public static String CreateSalt() {
-        String salt = "";
-        String saltset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=][}{<>"; //Choose random letters
-        Random rnd = new Random();
-        for (int i = 1; i <= 100; i++) {
-            int random = rnd.nextInt(82);
-            salt += Character.toString(saltset.charAt(random));  //Create Salt
+
+    public HashMap<Integer, String[]> GetEmployeeInfo() throws SQLException { //Get Employee Types and Salaries
+        connectToDb();
+        String SelectEmployeeInfostmt = "SELECT * FROM Employees";
+        HashMap<Integer, String[]> EmployeeDetails = new HashMap<>();
+        try{
+            Statement Employeestmt = c.createStatement();
+            ResultSet ResultSet = Employeestmt.executeQuery(SelectEmployeeInfostmt);
+            while(ResultSet.next()){
+                int id = ResultSet.getInt("id");
+                String type = ResultSet.getString("JobType");
+                String pay = ResultSet.getString("HourlyPay");
+                String[] details = {type, pay};
+                EmployeeDetails.put(id, details);
+            }
+            c.close();
         }
+        catch(Exception ex){
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+        return EmployeeDetails;
 
-        return salt;
     }
 
+    public String GetEmployeeRecords(int companyId) throws SQLException {
+        HashMap<Integer, String[]> EmployeeDetails = GetEmployeeInfo();
+
+        connectToDb();
+
+        String SelectUserstmt = "SELECT * FROM EmployeeRecords where CompanyId = ?";
+        HashMap<String, String[]> Records = new HashMap<>();
+        try {
+
+            // Read and print all values in table
+            PreparedStatement stmt  = c.prepareStatement(SelectUserstmt);
+            stmt.setInt(1, companyId);
+            ResultSet rs = stmt.executeQuery();
+            // loop through the result set
+            while (rs.next()) {
+                int quantity = rs.getInt("Quantity");
+                String type = EmployeeDetails.get(rs.getInt("EmployeeId"))[0];
+                String pay =  EmployeeDetails.get(rs.getInt("EmployeeId"))[1];
+                String[] details = {pay, Integer.toString(quantity)};
+                Records.put(type, details);
+            }
+
+            c.close();
+
+
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+
+        return new Gson().toJson(Records);
+
+    }
+
+    public void IncrementEmployeeQuantity(int companyId, String Employeetype) throws SQLException {
+        connectToDb();
+        String IncrementQuantitystmt = "INSERT INTO EmployeeRecords(CompanyId, EmployeeId, Quantity) SELECT ?, ?, Quantity = Quantity + 1 WHERE NOT EXISTS(SELECT * FROM EmployeeRecords WHERE CompanyId = ? AND EmployeeId = ?)";
+        String GetEmployeeId = "SELECT id FROM Employees WHERE EmployeeType = ?";
+        try {
+            int EmployeeId = 0;
+            PreparedStatement Employeestmt = c.prepareStatement(GetEmployeeId);
+            Employeestmt.setString(1, Employeetype);
+            ResultSet ResultSet = Employeestmt.executeQuery();
+            while(ResultSet.next()){
+                EmployeeId = ResultSet.getInt("id");
+            }
+            // Read and print all values in table
+            PreparedStatement stmt  = c.prepareStatement(IncrementQuantitystmt);
+            stmt.setInt(1, companyId);
+            stmt.setInt(2, EmployeeId);
+            stmt.setInt(3, companyId);
+            stmt.setInt(4, EmployeeId);
+            stmt.setInt(5, companyId);
+            stmt.setInt(6, EmployeeId);
+            stmt.executeUpdate();
+
+            c.close();
+
+
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+    }
+
+
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//        Byte[] toBytes = Encoding.UTF8.GetBytes(password + salt);
-//        using(HashAlgorithm TypeOfHash = new SHA512Managed())
-//        {
-//            Byte[] hashbytes = TypeOfHash.ComputeHash(toBytes);
-//            string HashedPassword = Convert.ToBase64String(hashbytes);
-//            return HashedPassword;
-//        }
+
         String input = password + salt;
-//        MessageDigest md = MessageDigest.getInstance("SHA-512");
-//        md.update(str.getBytes(StandardCharsets.UTF_8));
-//        byte byteData[] = md.digest();
-//
-//        //convert the byte to hex format method 1
-//        StringBuffer hashCodeBuffer = new StringBuffer();
-//        for (int i = 0; i < byteData.length; i++) {
-//            hashCodeBuffer.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-//        }
-//        return hashCodeBuffer.toString();
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         byte [] inputBytes = input.getBytes(StandardCharsets.UTF_8);
         byte[] digest = md.digest(inputBytes);
         return Base64.getEncoder().encodeToString(digest);
     }
-
-
-    public void testSqlStmt() {
-        String SelectAllTableStmt = "SELECT id FROM PlayerDetails;";
-        try {
-            PreparedStatement sql  = c.prepareStatement(SelectAllTableStmt);
-//            ResultSet rs = sql.executeQuery();
-//            while (rs.next()) {
-//                System.out.println(rs.getString("id"));
-//            }
-        } catch (Exception e) {
-            NotifyUnity.notifyDbError();
-            e.printStackTrace();
-        }
-    }
-
-
 }
