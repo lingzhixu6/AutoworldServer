@@ -1,10 +1,6 @@
 package Database;
 
 import com.google.gson.Gson;
-<<<<<<< HEAD
-=======
-
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -12,24 +8,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Base64;
-<<<<<<< HEAD
 import java.util.Random;
 import java.util.HashMap;
+import java.util.HashMap;
+import java.util.Random;
 
 public class DataBridge {
+
+    Connection c = null;
 
     public DataBridge() {
         connectToDb();
     }
 
-
-=======
-import java.util.HashMap;
-import java.util.Random;
-
-public class DataBridge {
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
-    Connection c = null;
     private void connectToDb() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -41,13 +32,8 @@ public class DataBridge {
 
     }
 
-<<<<<<< HEAD
     //This method should be called once only. I.e. when the server starts/restarts. So it should only be called in main method.
     public void createTables() throws SQLException {
-=======
-    public void createTables() throws SQLException {
-        connectToDb();
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
         try {
             Statement cmnd = c.createStatement();
             String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER)";
@@ -60,10 +46,6 @@ public class DataBridge {
             cmnd.execute(q_createTableEmployeeRecords);
 
             c.close();
-<<<<<<< HEAD
-=======
-
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
         }
         catch (Exception e){
             c.close();
@@ -74,10 +56,6 @@ public class DataBridge {
 
 
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
-<<<<<<< HEAD
-=======
-        connectToDb();
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
         String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
@@ -113,10 +91,6 @@ public class DataBridge {
     }
 
     public boolean AuthPlayer(String emailstr, String inputPassword) throws SQLException {
-<<<<<<< HEAD
-=======
-        connectToDb();
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
         String SelectPasswordstmt = "SELECT Password, Salt FROM PlayerDetails where Email = ?";
         try {
             // Read and print all values in table
@@ -144,10 +118,6 @@ public class DataBridge {
     }
 
     public String companyDetails(String email){
-<<<<<<< HEAD
-=======
-        connectToDb();
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
         String getCompanyIDQuery = "SELECT CompanyId, id FROM PlayerDetails where Email = ?";
         String getCompanyDetails = "SELECT * FROM CompanyInfo where id = ?";
         try {
@@ -226,15 +196,9 @@ public class DataBridge {
 //            return null;
 //        }
 //    }
-<<<<<<< HEAD
 
-
-=======
-//
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
 
     public HashMap<Integer, String[]> GetEmployeeInfo() throws SQLException { //Get Employee Types and Salaries
-        connectToDb();
         String SelectEmployeeInfostmt = "SELECT * FROM Employees";
         HashMap<Integer, String[]> EmployeeDetails = new HashMap<>();
         try{
@@ -259,9 +223,6 @@ public class DataBridge {
 
     public String GetEmployeeRecords(int companyId) throws SQLException {
         HashMap<Integer, String[]> EmployeeDetails = GetEmployeeInfo();
-
-        connectToDb();
-
         String SelectUserstmt = "SELECT * FROM EmployeeRecords where CompanyId = ?";
         HashMap<String, String[]> Records = new HashMap<>();
         try {
@@ -292,7 +253,6 @@ public class DataBridge {
     }
 
     public void IncrementEmployeeQuantity(int companyId, String Employeetype) throws SQLException {
-        connectToDb();
         String IncrementQuantitystmt = "INSERT INTO EmployeeRecords(CompanyId, EmployeeId, Quantity) SELECT ?, ?, Quantity = Quantity + 1 WHERE NOT EXISTS(SELECT * FROM EmployeeRecords WHERE CompanyId = ? AND EmployeeId = ?)";
         String GetEmployeeId = "SELECT id FROM Employees WHERE EmployeeType = ?";
         try {
@@ -322,14 +282,7 @@ public class DataBridge {
         }
     }
 
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 8cc7632b47cf97ad03874ac42ea8fa6ccb26461e
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-
         String input = password + salt;
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
