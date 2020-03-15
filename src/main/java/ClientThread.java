@@ -130,12 +130,14 @@ public class ClientThread extends Thread {
                 d.RepayLoan(companyId, repaymentAmount);
                 break;
             }
+            case "5006":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int companyId = Integer.parseInt(Details.get("CompanyId").toString());
+                String input = d.GetMaterialRecords(companyId);
+                out.write(input.getBytes(StandardCharsets.UTF_8));
+            }
             default:
                 break;
         }
-    }
-
-    private String extractOpcode(String clientMsg) {
-        return clientMsg.substring(0,4);
     }
 }

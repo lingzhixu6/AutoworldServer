@@ -63,7 +63,7 @@ public class DataBridge {
 
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
         connectToDb();
-        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0)";
+        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
         String InitialiseEmployeesstmt = "INSERT INTO EmployeeRecords (CompanyId, EmployeeId, Quantity) VALUES (?, ?, 0)";
@@ -301,6 +301,8 @@ public class DataBridge {
     public void BuyRawMaterials(int companyId, String name, int price, int quantity) throws SQLException {
         connectToDb();
         String insertRecord = "INSERT INTO MaterialRecords(CompanyId, MaterialName, Price, Quantity, SaleDate) Values(?, ?, ?, ?, ?)";
+        String updateMaterialInventory = "UPDATE CompanyInfo SET / = / + ? WHERE id = ?".replace("/",name);
+        System.out.println(updateMaterialInventory);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate today = LocalDate.now();
         String saleDate = formatter.format(today);
@@ -312,6 +314,13 @@ public class DataBridge {
             stmt.setInt(4, quantity);
             stmt.setString(5, saleDate);
             stmt.executeUpdate();
+
+            PreparedStatement inventoryStatement = c.prepareStatement(updateMaterialInventory);
+            //inventoryStatement.setString(1, name);
+            //inventoryStatement.setString(2, name);
+            inventoryStatement.setInt(1, quantity);
+            inventoryStatement.setInt(2, companyId);
+            inventoryStatement.executeUpdate();
 
             decrementFunds(companyId, price*quantity);
 
@@ -340,6 +349,40 @@ public class DataBridge {
             System.out.println(ex.getMessage());
             c.close();
         }
+    }
+
+    public String GetMaterialRecords(int companyId) throws SQLException {
+        StringBuilder input = new StringBuilder();
+        connectToDb();
+
+        String SelectUserstmt = "SELECT * FROM MaterialRecords where CompanyId = ? ORDER BY date(SaleDate) asc";
+        try {
+
+            // Read and print all values in table
+            PreparedStatement stmt  = c.prepareStatement(SelectUserstmt);
+            stmt.setInt(1, companyId);
+            ResultSet rs = stmt.executeQuery();
+            // loop through the result set
+            while (rs.next()) {
+                input.append(rs.getString("MaterialName"));
+                input.append("%");
+                input.append(rs.getInt("Quantity"));
+                input.append("%");
+                input.append(rs.getInt("Price"));
+                input.append("%");
+                input.append(rs.getString("SaleDate"));
+                input.append(",");
+            }
+            input.deleteCharAt(input.length() - 1);
+            c.close();
+
+
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+
+        return input.toString();
     }
 
 

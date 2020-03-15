@@ -4,13 +4,9 @@
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoWorldDb.db" beforeDir="false" afterPath="$PROJECT_DIR$/AutoWorldDb.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ClientThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/JavaBean/Player.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/TestSocket.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/Database/DataBridge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Database/DataBridge.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/TestSocket.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +79,7 @@
     <property name="project.structure.side.proportion" value="0.23448277" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
-    <property name="two.files.diff.last.used.file" value="$USER_HOME$/Downloads/DataBridge (2).java" />
+    <property name="two.files.diff.last.used.file" value="$USER_HOME$/Downloads/DataBridge (3).java" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -206,25 +202,25 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="486" y="353" width="467" height="225" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.23.1440.877@0.23.1440.877" timestamp="1584120050848" />
-    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog" timestamp="1584106795746">
+    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog" timestamp="1584302848002">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1584106795746" />
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1584123545304">
+    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1584302848002" />
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1584301738097">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1584123545304" />
-    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1584123545303">
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1584301738097" />
+    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1584301738096">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1584123545303" />
-    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1584123545303">
+    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1584301738096" />
+    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1584301738096">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1584123545303" />
-    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1584123545303">
+    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1584301738096" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1584301738097">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1584123545303" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1584301738097" />
   </component>
 </project>
