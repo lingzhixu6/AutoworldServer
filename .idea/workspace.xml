@@ -2,7 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ServerSocket/ClientThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerSocket/ClientThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ServerSocket/MultithreadedSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ServerSocket/MultithreadedSocket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ServerSocket/TestSocket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/TestSocket.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Database/DataBridge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Database/DataBridge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/AutoworldJavaServer.kotlin_module" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/META-INF/AutoworldJavaServer.kotlin_module" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ServerSocket/ClientThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ServerSocket/ClientThread.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ServerSocket/MultithreadedSocket.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ServerSocket/MultithreadedSocket.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/TestSocket.class" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -141,7 +154,10 @@
       <workItem from="1583878071092" duration="1766000" />
       <workItem from="1583924934832" duration="946000" />
       <workItem from="1584020003665" duration="25336000" />
-      <workItem from="1584151982624" duration="699000" />
+      <workItem from="1584151982624" duration="1493000" />
+      <workItem from="1584187335851" duration="3887000" />
+      <workItem from="1584217791603" duration="515000" />
+      <workItem from="1584218359646" duration="155000" />
     </task>
     <servers />
   </component>

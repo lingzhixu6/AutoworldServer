@@ -39,7 +39,7 @@ public class ClientThread extends Thread {
             outStream.close();
             clientSocket.close();
         } catch (Exception ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         } finally {
             System.out.println("Client: " + clientNo + " exit!! ");
             System.out.println();       //To separate print statements made by different clients
