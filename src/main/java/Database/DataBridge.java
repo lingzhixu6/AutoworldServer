@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class DataBridge {
             String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER, Aluminium INTEGER, Glass INTEGER, Steel INTEGER, Rubber INTEGER, Cars INTEGER)";
             String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createTableEmployees = "CREATE TABLE IF NOT EXISTS Employees (id INTEGER PRIMARY KEY, JobType VARCHAR, HourlyPay INTEGER)";
-            String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
+            String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, MechsInUse INTEGER, LastPaid VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
             String q_createRawMaterialRecords = "CREATE TABLE IF NOT EXISTS MaterialRecords (id INTEGER PRIMARY KEY, CompanyId INTEGER, MaterialName VARCHAR, Price INTEGER, Quantity INTEGER, SaleDate TEXT, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createCurrentlyBuildingCars = "CREATE TABLE IF NOT EXISTS CarsBuilding (id INTEGER PRIMARY KEY, CompanyId INTEGER, StartTime VARCHAR, SellPrice INTEGER, TimeToComplete INTEGER, MechsUsed INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createCarStock = "CREATE TABLE IF NOT EXISTS CarsInventory (id INTEGER PRIMARY KEY, CompanyId INTEGER, CarValue INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
@@ -57,13 +58,12 @@ public class DataBridge {
             c.close();
         }
     }
-
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
         connectToDb();
         String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber, Cars) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
-        String InitialiseEmployeesstmt = "INSERT INTO EmployeeRecords (CompanyId, EmployeeId, Quantity) VALUES (?, ?, 0)";
+        String InitialiseEmployeesstmt = "INSERT INTO EmployeeRecords (CompanyId, EmployeeId, Quantity, MechsInUse, LastPaid) VALUES (?, ?, 0, 0, ?)";
         String GetEmployeeId = "SELECT * FROM Employees";
         try {
             PreparedStatement pstmt = c.prepareStatement(InitialiseCompanyDetailsstmt);
@@ -88,10 +88,16 @@ public class DataBridge {
 
             Statement getIdstmt = c.createStatement();
             ResultSet ResultSet = getIdstmt.executeQuery(GetEmployeeId);
+
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDate = myDateObj.format(myFormatObj);
+
             while (ResultSet.next()){
                 PreparedStatement createEmployees = c.prepareStatement(InitialiseEmployeesstmt);
                 createEmployees.setInt(1, companyId);
                 createEmployees.setInt(2, ResultSet.getInt("id"));
+                createEmployees.setString(3, formattedDate);
                 createEmployees.executeUpdate();
             }
             c.close();
@@ -104,7 +110,6 @@ public class DataBridge {
 
 
     }
-
     public void startCarBuild(int companyID, String time, int sellPrice, int timeNeeded, int mechs) throws SQLException {
         connectToDb();
         String makeNewCarRow = "INSERT INTO CarsBuilding (CompanyId, StartTime, SellPrice, TimeToComplete, MechsUsed) VALUES (?, ?, ?, ?, ?)";
@@ -124,7 +129,6 @@ public class DataBridge {
             c.close();
         }
     }
-
     public String getBuildingCars(int compID) throws SQLException {
         connectToDb();
         String getCurrentCars = "SELECT id, StartTime, SellPrice, TimeToComplete, MechsUsed FROM CarsBuilding where CompanyId = ?";
@@ -144,7 +148,6 @@ public class DataBridge {
             return "failed retrieving building cars";
         }
     }
-
     public void finishCar(int rowID, int carPrice, int mechs) throws SQLException {
         connectToDb();
         String getCompanyIDForRow = "SELECT CompanyId FROM CarsBuilding WHERE id = ?";
@@ -175,10 +178,9 @@ public class DataBridge {
             c.close();
         }
     }
-
     public void decrementMechanic(int compID, int mechs) throws SQLException {
 
-        String updateMech = "UPDATE EmployeeRecords SET Quantity = Quantity - ? WHERE CompanyId = ? AND EmployeeId = 1";
+        String updateMech = "UPDATE EmployeeRecords SET MechsInUse = MechsInUse + ? WHERE CompanyId = ? AND EmployeeId = 1";
         try{
             PreparedStatement decrementMechanicStatement = c.prepareStatement(updateMech);
             decrementMechanicStatement.setInt(1, mechs);
@@ -188,10 +190,9 @@ public class DataBridge {
             System.out.println(e.getMessage());
         }
     }
-
     public void incrementMechanic(int compID, int mechs) throws SQLException{
         connectToDb();
-        String updateMech = "UPDATE EmployeeRecords SET Quantity = Quantity + ? WHERE CompanyId = ? AND EmployeeId = 1";
+        String updateMech = "UPDATE EmployeeRecords SET MechsInUse = MechsInUse - ? WHERE CompanyId = ? AND EmployeeId = 1";
         try{
             PreparedStatement decrementMechanicStatement = c.prepareStatement(updateMech);
             decrementMechanicStatement.setInt(1, mechs);
@@ -203,8 +204,45 @@ public class DataBridge {
             c.close();
         }
     }
+    public String getEmployeeCounts(int compID) throws SQLException {
+        connectToDb();
+        String getEmployees = "SELECT EmployeeId, Quantity, MechsInUse FROM EmployeeRecords WHERE CompanyId = ?";
+        try {
+            PreparedStatement getEmployeeNumbersStatement = c.prepareStatement(getEmployees);
+            getEmployeeNumbersStatement.setInt(1, compID);
+            ResultSet rs = getEmployeeNumbersStatement.executeQuery();
+            HashMap<Integer, String[]> employeeCountMap = new HashMap<>();
+            while (rs.next()){
+                employeeCountMap.put(rs.getInt("EmployeeId"), new String[]{Integer.toString(rs.getInt("Quantity")), Integer.toString(rs.getInt("MechsInUse"))});
+            }
+            c.close();
+            return new Gson().toJson(employeeCountMap);
+        } catch (Exception e){
+            c.close();
+            System.out.println(e.getMessage());
+            return "Failed to get employee Count";
+        }
+    }
+    public void payThePeople(int compID, int payAmount) throws SQLException {
+        connectToDb();
+        String updateLastPaid = "UPDATE EmployeeRecords SET LastPaid = ? WHERE CompanyId = ?";
+        try {
+            PreparedStatement updateLastPaidStatement = c.prepareStatement(updateLastPaid);
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDate = myDateObj.format(myFormatObj);
 
+            updateLastPaidStatement.setString(1, formattedDate);
+            updateLastPaidStatement.setInt(2, compID);
+            updateLastPaidStatement.executeUpdate();
 
+            decrementFunds(compID, payAmount);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        } finally {
+            c.close();
+        }
+    }
     public boolean AuthPlayer(String emailstr, String inputPassword) throws SQLException {
         connectToDb();
         String SelectPasswordstmt = "SELECT Password, Salt FROM PlayerDetails where Email = ?";
@@ -294,8 +332,6 @@ public class DataBridge {
             return "";
         }
     }
-
-
     public HashMap<Integer, String[]> GetEmployeeInfo() throws SQLException { //Get Employee Types and Salaries
         connectToDb();
         String SelectEmployeeInfostmt = "SELECT * FROM Employees";
@@ -319,7 +355,6 @@ public class DataBridge {
         return EmployeeDetails;
 
     }
-
     public String GetEmployeeRecords(int companyId) throws SQLException {
         HashMap<Integer, String[]> EmployeeDetails = GetEmployeeInfo();
 
@@ -328,7 +363,6 @@ public class DataBridge {
         String SelectUserstmt = "SELECT * FROM EmployeeRecords where CompanyId = ?";
         HashMap<String, String[]> Records = new HashMap<>();
         try {
-
             // Read and print all values in table
             PreparedStatement stmt  = c.prepareStatement(SelectUserstmt);
             stmt.setInt(1, companyId);
@@ -353,7 +387,6 @@ public class DataBridge {
         return new Gson().toJson(Records);
 
     }
-
     public void IncrementEmployeeQuantity(int companyId, String Employeetype) throws SQLException {
         connectToDb();
         String IncrementQuantitystmt = "UPDATE EmployeeRecords SET Quantity = Quantity + 1 WHERE CompanyId = ? AND EmployeeId = ?";
@@ -385,7 +418,25 @@ public class DataBridge {
             System.out.println(ex.getMessage());
         }
     }
-
+    public String getLastPaid(int compID) throws SQLException {
+        connectToDb();
+        String getEmployeePaidLog = "SELECT Employees.HourlyPay, EmployeeRecords.Quantity, EmployeeRecords.LastPaid FROM EmployeeRecords  INNER JOIN Employees ON EmployeeRecords.EmployeeId=Employees.id AND EmployeeRecords.CompanyId=?";
+        try{
+            PreparedStatement getEmployeeLogStatement = c.prepareStatement(getEmployeePaidLog);
+            getEmployeeLogStatement.setInt(1, compID);
+            ResultSet rs = getEmployeeLogStatement.executeQuery();
+            HashMap<Integer, String[]> employeeLogMap= new HashMap();
+            while (rs.next()){
+                employeeLogMap.put(rs.getInt("HourlyPay"), new String[] {Integer.toString(rs.getInt("Quantity")), rs.getString("LastPaid")});
+            }
+            c.close();
+            return new Gson().toJson(employeeLogMap);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            c.close();
+            return "Failed to get employee last paid";
+        }
+    }
     private void incrementFunds(int companyID, int amount){
         String updateFunds = "UPDATE CompanyInfo SET Funds = Funds + ?, Revenue = Revenue + ? WHERE id = ?";
         try {
@@ -396,7 +447,6 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
-
     private void decrementFunds(int companyID, int amount){
         String updateFunds = "UPDATE CompanyInfo SET Funds = Funds - ?, Costs = Costs + ? WHERE id = ?";
         try {
@@ -407,7 +457,6 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
-
     public void BuyRawMaterials(int companyId, String name, int price, int quantity) throws SQLException {
         connectToDb();
         String insertRecord = "INSERT INTO MaterialRecords(CompanyId, MaterialName, Price, Quantity, SaleDate) Values(?, ?, ?, ?, ?)";
@@ -442,7 +491,6 @@ public class DataBridge {
             System.out.println(ex.getMessage());
         }
     }
-
     public void RepayLoan(int companyId, int loanAmount) throws SQLException {
         connectToDb();
         String IncrementQuantitystmt = "UPDATE CompanyInfo SET LoanAmount = LoanAmount - ?, Funds = Funds - ? WHERE id = ?";
@@ -491,6 +539,30 @@ public class DataBridge {
         }
         return input.toString();
     }
+
+    public String GetPlayerRankings() throws SQLException {
+        connectToDb();
+        HashMap<String, String[]> playerInfo = new HashMap<>();
+        String GetPlayerRankingsstmt = "SELECT Company, Revenue, Costs FROM CompanyInfo";
+        try{
+            Statement stmt = c.createStatement();
+            ResultSet ResultSet = stmt.executeQuery(GetPlayerRankingsstmt);
+            while(ResultSet.next()){
+                String name = ResultSet.getString("Company");
+                String revenue = ResultSet.getString("Revenue"); // revenue
+                String costs = ResultSet.getString("Costs"); // costs
+                String[] details = {revenue, costs};
+                playerInfo.put(name, details);
+            }
+            c.close();
+        }
+        catch (Exception ex){
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+
+        return new Gson().toJson(playerInfo);
+    }
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String input = password + salt;
         MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -498,4 +570,5 @@ public class DataBridge {
         byte[] digest = md.digest(inputBytes);
         return Base64.getEncoder().encodeToString(digest);
     }
+
 }

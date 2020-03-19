@@ -126,6 +126,25 @@ public class ClientThread extends Thread {
                 d.finishCar(carID, price, mechs);
                 break;
             }
+            case "0007":{
+                HashMap deets = ParseJson(data);
+                int compID = Integer.parseInt(deets.get("CompanyId").toString());
+                int amountToPay = Integer.parseInt(deets.get("amountToPay").toString());
+                d.payThePeople(compID, amountToPay);
+                break;
+            }
+            case "0008":{
+                HashMap details = ParseJson(data);
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                out.write(d.getLastPaid(compID).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "0009":{
+                HashMap details = ParseJson(data);
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                out.write(d.getEmployeeCounts(compID).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
             case "5000": {
                 HashMap EmployeeDetails = ParseJson(receivedData[1]);
                 int companyId = Integer.parseInt(EmployeeDetails.get("CompanyId").toString());
@@ -161,6 +180,10 @@ public class ClientThread extends Thread {
                 int companyId = Integer.parseInt(Details.get("CompanyId").toString());
                 String input = d.GetMaterialRecords(companyId);
                 out.write(input.getBytes(StandardCharsets.UTF_8));
+            }
+            case "5007":{
+                String Records = d.GetPlayerRankings();
+                out.write(Records.getBytes(StandardCharsets.UTF_8));
             }
             default:
                 break;

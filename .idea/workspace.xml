@@ -80,7 +80,7 @@
     <property name="project.structure.side.proportion" value="0.23448277" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
-    <property name="two.files.diff.last.used.file" value="$USER_HOME$/Downloads/DataBridge (3).java" />
+    <property name="two.files.diff.last.used.file" value="$USER_HOME$/Downloads/ClientThread.java" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -203,26 +203,26 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="486" y="353" width="467" height="225" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.23.1440.877@0.23.1440.877" timestamp="1584120050848" />
-    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog" timestamp="1584302848002">
+    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog" timestamp="1584658609451">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1584302848002" />
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1584583241148">
+    <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1584658609451" />
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom" timestamp="1584658074783">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1584583241148" />
-    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1584583241147">
+    <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1584658074783" />
+    <state width="1398" height="230" key="GridCell.Tab.0.center" timestamp="1584658074782">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1584583241147" />
-    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1584583241146">
+    <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1584658074782" />
+    <state width="1398" height="230" key="GridCell.Tab.0.left" timestamp="1584658074781">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1584583241146" />
-    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1584583241147">
+    <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1584658074781" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right" timestamp="1584658074783">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1584583241147" />
+    <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1584658074783" />
     <state x="221" y="100" key="SettingsEditor" timestamp="1584540940213">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
