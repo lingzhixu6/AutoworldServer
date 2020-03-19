@@ -100,6 +100,32 @@ public class ClientThread extends Thread {
                 out.write(d.companyDetails(loggedInEmail).getBytes(StandardCharsets.UTF_8));
                 break;
             }
+            case "0004":{
+                HashMap details = ParseJson(data);
+                int companyId = Integer.parseInt(details.get("companyID").toString());
+                String startTime = details.get("startTime").toString();
+                int sellPrice = Integer.parseInt(details.get("sellPrice").toString().substring(0, details.get("sellPrice").toString().length()-2));
+                int completionTime = Integer.parseInt(details.get("completionTime").toString().substring(0, details.get("completionTime").toString().length()-2));
+                int mechanics = Integer.parseInt(details.get("mechanics").toString().substring(0, details.get("mechanics").toString().length()-2));
+                System.out.println(mechanics);
+                d.startCarBuild(companyId, startTime, sellPrice, completionTime, mechanics);
+                break;
+            }
+            case "0005":{
+                HashMap dets = ParseJson(data);
+                int companyId = Integer.parseInt(dets.get("CompanyId").toString());
+                System.out.println(d.getBuildingCars(companyId));
+                out.write(d.getBuildingCars(companyId).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "0006":{
+                HashMap deets = ParseJson(data);
+                int carID = Integer.parseInt(deets.get("carID").toString());
+                int price = Integer.parseInt(deets.get("value").toString());
+                int mechs = Integer.parseInt(deets.get("mechsUsed").toString());
+                d.finishCar(carID, price, mechs);
+                break;
+            }
             case "5000": {
                 HashMap EmployeeDetails = ParseJson(receivedData[1]);
                 int companyId = Integer.parseInt(EmployeeDetails.get("CompanyId").toString());

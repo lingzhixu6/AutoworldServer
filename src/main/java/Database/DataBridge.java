@@ -3,7 +3,6 @@ package Database;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,7 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Random;
 
 public class DataBridge {
     Connection c = null;
@@ -24,22 +22,26 @@ public class DataBridge {
             e.printStackTrace();
             System.exit(0);
         }
-
     }
 
     public void createTables() throws SQLException {
         connectToDb();
         try {
             Statement cmnd = c.createStatement();
-            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER, Aluminium INTEGER, Glass INTEGER, Steel INTEGER, Rubber INTEGER )";
+            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER, Aluminium INTEGER, Glass INTEGER, Steel INTEGER, Rubber INTEGER, Cars INTEGER)";
             String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createTableEmployees = "CREATE TABLE IF NOT EXISTS Employees (id INTEGER PRIMARY KEY, JobType VARCHAR, HourlyPay INTEGER)";
             String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
             String q_createRawMaterialRecords = "CREATE TABLE IF NOT EXISTS MaterialRecords (id INTEGER PRIMARY KEY, CompanyId INTEGER, MaterialName VARCHAR, Price INTEGER, Quantity INTEGER, SaleDate TEXT, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+            String q_createCurrentlyBuildingCars = "CREATE TABLE IF NOT EXISTS CarsBuilding (id INTEGER PRIMARY KEY, CompanyId INTEGER, StartTime VARCHAR, SellPrice INTEGER, TimeToComplete INTEGER, MechsUsed INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+            String q_createCarStock = "CREATE TABLE IF NOT EXISTS CarsInventory (id INTEGER PRIMARY KEY, CompanyId INTEGER, CarValue INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+
             cmnd.execute(q_createTableCompanyInfo);
             cmnd.execute(q_createTablePlayerDetails);
             cmnd.execute(q_createTableEmployees);
             cmnd.execute(q_createTableEmployeeRecords);
+            cmnd.execute(q_createCurrentlyBuildingCars);
+            cmnd.execute(q_createCarStock);
             String q_insertMechanic = "INSERT INTO Employees(JobType, HourlyPay) SELECT 'Mechanic', 50 WHERE NOT EXISTS(SELECT * FROM Employees WHERE JobType = 'Mechanic')";
             String q_insertEngineer = "INSERT INTO Employees(JobType, HourlyPay) SELECT 'Engineer', 200 WHERE NOT EXISTS(SELECT * FROM Employees WHERE JobType = 'Engineer')";
             String q_insertSalesperson = "INSERT INTO Employees(JobType, HourlyPay) SELECT 'Salesperson', 70 WHERE NOT EXISTS(SELECT * FROM Employees WHERE JobType = 'Salesperson')";
@@ -49,21 +51,16 @@ public class DataBridge {
             stmt.executeUpdate( q_insertSalesperson);
             cmnd.execute(q_createRawMaterialRecords);
 
-
             c.close();
-
         }
         catch (Exception e){
             c.close();
         }
     }
 
-
-
-
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
         connectToDb();
-        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0)";
+        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber, Cars) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
         String InitialiseEmployeesstmt = "INSERT INTO EmployeeRecords (CompanyId, EmployeeId, Quantity) VALUES (?, ?, 0)";
@@ -108,6 +105,106 @@ public class DataBridge {
 
     }
 
+    public void startCarBuild(int companyID, String time, int sellPrice, int timeNeeded, int mechs) throws SQLException {
+        connectToDb();
+        String makeNewCarRow = "INSERT INTO CarsBuilding (CompanyId, StartTime, SellPrice, TimeToComplete, MechsUsed) VALUES (?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement carBuildCommand = c.prepareStatement(makeNewCarRow);
+            carBuildCommand.setInt(1, companyID);
+            carBuildCommand.setString(2, time);
+            carBuildCommand.setInt(3, sellPrice);
+            carBuildCommand.setInt(4, timeNeeded);
+            carBuildCommand.setInt(5, mechs);
+            carBuildCommand.executeUpdate();
+
+            decrementMechanic(companyID, mechs);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        } finally {
+            c.close();
+        }
+    }
+
+    public String getBuildingCars(int compID) throws SQLException {
+        connectToDb();
+        String getCurrentCars = "SELECT id, StartTime, SellPrice, TimeToComplete, MechsUsed FROM CarsBuilding where CompanyId = ?";
+        try {
+            HashMap<Integer, String[]> currCars = new HashMap<>();
+            PreparedStatement getCurrentlyBuildingCarsStatement = c.prepareStatement(getCurrentCars);
+            getCurrentlyBuildingCarsStatement.setInt(1, compID);
+            ResultSet resultSet = getCurrentlyBuildingCarsStatement.executeQuery();
+            while (resultSet.next()){
+                currCars.put(resultSet.getInt("id"), new String[]{resultSet.getString("StartTime"), Integer.toString(resultSet.getInt("SellPrice")), Integer.toString(resultSet.getInt("TimeToComplete")), Integer.toString(resultSet.getInt("MechsUsed"))});
+            }
+            c.close();
+            return new Gson().toJson(currCars);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            c.close();
+            return "failed retrieving building cars";
+        }
+    }
+
+    public void finishCar(int rowID, int carPrice, int mechs) throws SQLException {
+        connectToDb();
+        String getCompanyIDForRow = "SELECT CompanyId FROM CarsBuilding WHERE id = ?";
+        String deleteRowFromCarsBuilding = "DELETE FROM CarsBuilding WHERE id = ?";
+        String addStockRow = "INSERT INTO CarsInventory (CompanyId, CarValue) VALUES (?, ?)";
+
+        try{
+            PreparedStatement companyRowStatment = c.prepareStatement(getCompanyIDForRow);
+            companyRowStatment.setInt(1, rowID);
+            ResultSet compIdRS = companyRowStatment.executeQuery();
+            int companyId = 0;
+            while (compIdRS.next()){
+                companyId = compIdRS.getInt("CompanyId");
+            }
+            PreparedStatement deleteRowStatement = c.prepareStatement(deleteRowFromCarsBuilding);
+            deleteRowStatement.setInt(1, rowID);
+            deleteRowStatement.executeUpdate();
+
+            PreparedStatement makeNewRowStatement = c.prepareStatement(addStockRow);
+            makeNewRowStatement.setInt(1, companyId);
+            makeNewRowStatement.setInt(2, carPrice);
+            makeNewRowStatement.executeUpdate();
+
+            incrementMechanic(companyId, mechs);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        } finally {
+            c.close();
+        }
+    }
+
+    public void decrementMechanic(int compID, int mechs) throws SQLException {
+
+        String updateMech = "UPDATE EmployeeRecords SET Quantity = Quantity - ? WHERE CompanyId = ? AND EmployeeId = 1";
+        try{
+            PreparedStatement decrementMechanicStatement = c.prepareStatement(updateMech);
+            decrementMechanicStatement.setInt(1, mechs);
+            decrementMechanicStatement.setInt(2, compID);
+            decrementMechanicStatement.executeUpdate();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void incrementMechanic(int compID, int mechs) throws SQLException{
+        connectToDb();
+        String updateMech = "UPDATE EmployeeRecords SET Quantity = Quantity + ? WHERE CompanyId = ? AND EmployeeId = 1";
+        try{
+            PreparedStatement decrementMechanicStatement = c.prepareStatement(updateMech);
+            decrementMechanicStatement.setInt(1, mechs);
+            decrementMechanicStatement.setInt(2, compID);
+            decrementMechanicStatement.executeUpdate();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        } finally {
+            c.close();
+        }
+    }
+
+
     public boolean AuthPlayer(String emailstr, String inputPassword) throws SQLException {
         connectToDb();
         String SelectPasswordstmt = "SELECT Password, Salt FROM PlayerDetails where Email = ?";
@@ -135,7 +232,6 @@ public class DataBridge {
             return false;
         }
     }
-
     public String companyDetails(String email) throws SQLException {
         connectToDb();
         String getCompanyIDQuery = "SELECT CompanyId, id FROM PlayerDetails where Email = ?";
@@ -147,7 +243,6 @@ public class DataBridge {
             resultSet.next();
             String companyId = resultSet.getString("CompanyId");
             String userID = resultSet.getString("id");
-
 
             statement = c.prepareStatement(getCompanyDetails);
             statement.setString(1, companyId);
@@ -166,6 +261,11 @@ public class DataBridge {
             String carsSold = companyResultSet.getString(9); // cars sold
             String currentLevel = companyResultSet.getString((10)); // level
             String xp = companyResultSet.getString(11); // xp
+            String aluminium = companyResultSet.getString(12); // steel stock
+            String glass = companyResultSet.getString(13); // glass stock
+            String steel = companyResultSet.getString(14); // steel stock
+            String rubber = companyResultSet.getString(15); // rubber stock
+            String cars = companyResultSet.getString(16); // car stock;
 
             HashMap<String, String> companyDetailsMap = new HashMap<>();
             companyDetailsMap.put("Company Name", companyName);
@@ -180,6 +280,11 @@ public class DataBridge {
             companyDetailsMap.put("User ID", userID);
             companyDetailsMap.put("Current Level", currentLevel);
             companyDetailsMap.put("XP", xp);
+            companyDetailsMap.put("Aluminium", aluminium);
+            companyDetailsMap.put("Glass", glass);
+            companyDetailsMap.put("Steel", steel);
+            companyDetailsMap.put("Rubber", rubber);
+            companyDetailsMap.put("Cars", cars);
 
             c.close();
             return new Gson().toJson(companyDetailsMap);
@@ -252,20 +357,25 @@ public class DataBridge {
     public void IncrementEmployeeQuantity(int companyId, String Employeetype) throws SQLException {
         connectToDb();
         String IncrementQuantitystmt = "UPDATE EmployeeRecords SET Quantity = Quantity + 1 WHERE CompanyId = ? AND EmployeeId = ?";
-        String GetEmployeeId = "SELECT id FROM Employees WHERE JobType = ?";
+        String GetEmployeeId = "SELECT id, HourlyPay FROM Employees WHERE JobType = ?";
+
         try {
             int EmployeeId = 0;
+            int employeePay = 0;
             PreparedStatement Employeestmt = c.prepareStatement(GetEmployeeId);
             Employeestmt.setString(1, Employeetype);
             ResultSet ResultSet = Employeestmt.executeQuery();
             while(ResultSet.next()){
                 EmployeeId = ResultSet.getInt("id");
+                employeePay = ResultSet.getInt("HourlyPay");
             }
             // Read and print all values in table
             PreparedStatement stmt  = c.prepareStatement(IncrementQuantitystmt);
             stmt.setInt(1, companyId);
             stmt.setInt(2, EmployeeId);
             stmt.executeUpdate();
+
+            decrementFunds(companyId, employeePay);
 
             c.close();
 
@@ -350,14 +460,12 @@ public class DataBridge {
             c.close();
         }
     }
-
     public String GetMaterialRecords(int companyId) throws SQLException {
         StringBuilder input = new StringBuilder();
         connectToDb();
 
-        String SelectUserstmt = "SELECT * FROM MaterialRecords where CompanyId = ? ORDER BY date(SaleDate) asc";
+        String SelectUserstmt = "SELECT * FROM MaterialRecords where CompanyId = ? ORDER BY date(SaleDate) desc";
         try {
-
             // Read and print all values in table
             PreparedStatement stmt  = c.prepareStatement(SelectUserstmt);
             stmt.setInt(1, companyId);
@@ -381,15 +489,10 @@ public class DataBridge {
             c.close();
             System.out.println(ex.getMessage());
         }
-
         return input.toString();
     }
-
-
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-
         String input = password + salt;
-
         MessageDigest md = MessageDigest.getInstance("SHA-512");
         byte [] inputBytes = input.getBytes(StandardCharsets.UTF_8);
         byte[] digest = md.digest(inputBytes);
