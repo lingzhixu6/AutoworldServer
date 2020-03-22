@@ -61,9 +61,6 @@ public class ClientThread extends Thread {
         String opCode = receivedData[0];
         String data = receivedData[1];
         switch (opCode) {
-            case "0010":
-                out.write(new DiscoveryNews().queryNewsAndGetDesiredResult());
-                break;
             case "0000":
                 d.createTables();
                 break;
@@ -145,6 +142,31 @@ public class ClientThread extends Thread {
                 out.write(d.getEmployeeCounts(compID).getBytes(StandardCharsets.UTF_8));
                 break;
             }
+            case "0010":{
+                out.write(new DiscoveryNews().queryNewsAndGetDesiredResult());
+                break;
+            }
+            case "0011":{
+                HashMap details = ParseJson(data);
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                int carsToSell = Integer.parseInt(details.get("numberToSell").toString());
+                d.sellCars(compID, carsToSell);
+            }
+            case "0012":{
+                HashMap details = ParseJson(data);
+                System.out.println(details.keySet());
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                out.write(d.getLastCarSold(compID).getBytes(StandardCharsets.UTF_8));
+            }
+            case "0013":{
+                HashMap details = ParseJson(data);
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                int alum = Integer.parseInt(details.get("aluminium").toString());
+                int steel = Integer.parseInt(details.get("steel").toString());
+                int glass = Integer.parseInt(details.get("glass").toString());
+                int rubber = Integer.parseInt(details.get("rubber").toString());
+                d.decrementMaterials(compID, alum, steel, glass, rubber);
+            }
             case "5000": {
                 HashMap EmployeeDetails = ParseJson(receivedData[1]);
                 int companyId = Integer.parseInt(EmployeeDetails.get("CompanyId").toString());
@@ -184,6 +206,22 @@ public class ClientThread extends Thread {
             case "5007":{
                 String Records = d.GetPlayerRankings();
                 out.write(Records.getBytes(StandardCharsets.UTF_8));
+            }
+            case "5008":{
+                HashMap Details = ParseJson(receivedData[1]);
+                String email = Details.get("email").toString();
+                String company = Details.get("company").toString();
+                String input = d.CheckInputExists(email, company);
+                out.write(input.getBytes(StandardCharsets.UTF_8));
+            }
+            case "5009":{
+                HashMap Details = ParseJson(receivedData[1]);
+                String email = Details.get("email").toString();
+                String oldPassword = Details.get("oldPassword").toString();
+                String password = Details.get("password").toString();
+                String salt = Details.get("salt").toString();
+                String input = d.UpdatePassword(email, oldPassword, password, salt);
+                out.write(input.getBytes(StandardCharsets.UTF_8));
             }
             default:
                 break;
