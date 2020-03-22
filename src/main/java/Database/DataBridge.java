@@ -25,7 +25,6 @@ public class DataBridge {
             System.exit(0);
         }
     }
-
     public void createTables() throws SQLException {
         connectToDb();
         try {
@@ -112,10 +111,7 @@ public class DataBridge {
             c.close();
             return false;
         }
-
-
     }
-
     public String CheckInputExists(String email, String company) throws SQLException {
         connectToDb();
         String result = "True";
@@ -146,8 +142,41 @@ public class DataBridge {
         resultOutput.put("result", result);
         return new Gson().toJson(resultOutput);
     }
+    public void incrementXP(int compID, int xpPoints) throws SQLException {
+        connectToDb();
+        String getCurrentLevelAndXP = "SELECT CompanyLevel, XP FROM CompanyInfo WHERE id = ?";
+        String updateLevelAndXP = "UPDATE CompanyInfo SET CompanyLevel = ?, XP = ? WHERE id = ?";
 
-
+        try {
+            PreparedStatement cLevelSt = c.prepareStatement(getCurrentLevelAndXP);
+            cLevelSt.setInt(1, compID);
+            ResultSet levXP = cLevelSt.executeQuery();
+            int lev = 0;
+            int xp = 0;
+            while (levXP.next()){
+                lev = levXP.getInt("CompanyLevel");
+                xp = levXP.getInt("XP");
+            }
+            int maxXP = lev*25 + 500;
+            PreparedStatement updateLevXpSt = c.prepareStatement(updateLevelAndXP);
+            if((xp + xpPoints)>=maxXP){
+                int levelsToIncrement = (xp + xpPoints)/maxXP;
+                int remainderXp = (xp + xpPoints)%maxXP;
+                updateLevXpSt.setInt(1, lev+levelsToIncrement);
+                updateLevXpSt.setInt(2, remainderXp);
+                updateLevXpSt.setInt(3, compID);
+            } else {
+                updateLevXpSt.setInt(1, lev);
+                updateLevXpSt.setInt(2, xp+xpPoints);
+                updateLevXpSt.setInt(3, compID);
+            }
+            updateLevXpSt.executeUpdate();
+            c.close();
+        } catch (Exception e){
+            c.close();
+            System.out.println(e.getMessage());
+        }
+    }
     public String UpdatePassword(String email, String oldPassword, String password, String salt) throws SQLException {
         String result = "True";
         if (AuthPlayer(email, oldPassword)){
@@ -174,10 +203,10 @@ public class DataBridge {
         resultOutput.put("result", result);
         return new Gson().toJson(resultOutput);
     }
-
     public void startCarBuild(int companyID, String time, int sellPrice, int timeNeeded, int mechs) throws SQLException {
         connectToDb();
         String makeNewCarRow = "INSERT INTO CarsBuilding (CompanyId, StartTime, SellPrice, TimeToComplete, MechsUsed) VALUES (?, ?, ?, ?, ?)";
+        String decrementMats = "UPDATE CompanyInfo SET Aluminium = Aluminium - 2, Steel = Steel - 1, Glass = Glass - 3, Rubber = Rubber - 3 WHERE id = ?";
         try {
             PreparedStatement carBuildCommand = c.prepareStatement(makeNewCarRow);
             carBuildCommand.setInt(1, companyID);
@@ -186,6 +215,10 @@ public class DataBridge {
             carBuildCommand.setInt(4, timeNeeded);
             carBuildCommand.setInt(5, mechs);
             carBuildCommand.executeUpdate();
+
+            PreparedStatement decremMatsSt = c.prepareStatement(decrementMats);
+            decremMatsSt.setInt(1, companyID);
+            decremMatsSt.executeUpdate();
 
             decrementMechanic(companyID, mechs);
         } catch (Exception e){
@@ -308,8 +341,7 @@ public class DataBridge {
             c.close();
         }
     }
-
-    public void sellCars(int compID, int numberOfCars){
+    public void sellCars(int compID, int numberOfCars) throws SQLException {
         connectToDb();
         String numberOfAvailableCars = "SELECT count(*) FROM CarsInventory WHERE CompanyId = ?";
         String getAvailableCarsFromStock = "SELECT * FROM CarsInventory WHERE CompanyId = ? ORDER BY id ASC LIMIT ?";
@@ -330,8 +362,8 @@ public class DataBridge {
                 availCarInt = availCarSet.getInt(1);
             }
             int carsToRemove = Math.min(numberOfCars, availCarInt);
-            //System.out.println(carsToRemove);
             if(carsToRemove>0){
+
                 PreparedStatement removeFromStockStatement = c.prepareStatement(getAvailableCarsFromStock);
                 PreparedStatement insertIntoSoldCarsStatement = c.prepareStatement(inserIntoSoldCars);
 
@@ -341,7 +373,6 @@ public class DataBridge {
                 int[] idsToDelete = new int[carsToRemove];
                 int index = 0;
                 while (soldCarsSet.next()){
-                    System.out.println(soldCarsSet.getInt("CarValue"));
                     insertIntoSoldCarsStatement.setInt(1, compID);
                     insertIntoSoldCarsStatement.setInt(2, soldCarsSet.getInt("CarValue"));
                     insertIntoSoldCarsStatement.setString(3, formattedDate);
@@ -350,7 +381,6 @@ public class DataBridge {
                     idsToDelete[index] = soldCarsSet.getInt("id");
                     index++;
                 }
-                System.out.println(Arrays.toString(idsToDelete));
 
                 PreparedStatement deleteFromInventoryStatement = c.prepareStatement(deleteRowsFromInventory);
                 for(int i : idsToDelete){
@@ -367,7 +397,10 @@ public class DataBridge {
             updateLastSoldStatement.setString(1, formattedDate);
             updateLastSoldStatement.setInt(2, compID);
             updateLastSoldStatement.executeUpdate();
+            c.close();
+            incrementXP(compID, 200 * carsToRemove);
         } catch (Exception e){
+            c.close();
             System.out.println(e.getMessage());
         }
     }
@@ -431,7 +464,7 @@ public class DataBridge {
             String glass = companyResultSet.getString(13); // glass stock
             String steel = companyResultSet.getString(14); // steel stock
             String rubber = companyResultSet.getString(15); // rubber stock
-            String cars = companyResultSet.getString(16); // car stock;
+            String LastCarSold = companyResultSet.getString(16); // lcs;
 
             HashMap<String, String> companyDetailsMap = new HashMap<>();
             companyDetailsMap.put("Company Name", companyName);
@@ -450,7 +483,7 @@ public class DataBridge {
             companyDetailsMap.put("Glass", glass);
             companyDetailsMap.put("Steel", steel);
             companyDetailsMap.put("Rubber", rubber);
-            companyDetailsMap.put("Cars", cars);
+            companyDetailsMap.put("Last Car Sold", LastCarSold);
 
             c.close();
             return new Gson().toJson(companyDetailsMap);
@@ -546,25 +579,6 @@ public class DataBridge {
             System.out.println(ex.getMessage());
         }
     }
-    public String getLastCarSold(int compID){
-        connectToDb();
-        String getLastSold = "SELECT LastCarSold FROM CompanyInfo WHERE id = ?";
-        try {
-            PreparedStatement glss = c.prepareStatement(getLastSold);
-            glss.setInt(1, compID);
-            HashMap<String, String> returnObj = new HashMap<>();
-            ResultSet rs = glss.executeQuery();
-            while (rs.next()){
-                returnObj.put("LastSold", rs.getString(1));
-            }
-            return new Gson().toJson(returnObj);
-
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            System.out.println("error from 12");
-            return "Failed to get company last sold";
-        }
-    }
     public String getLastPaid(int compID) throws SQLException {
         connectToDb();
         String getEmployeePaidLog = "SELECT Employees.HourlyPay, EmployeeRecords.Quantity, EmployeeRecords.LastPaid FROM EmployeeRecords  INNER JOIN Employees ON EmployeeRecords.EmployeeId=Employees.id AND EmployeeRecords.CompanyId=?";
@@ -604,8 +618,7 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
-    public void decrementMaterials(int compID, int al, int st, int gl, int rb){
-        connectToDb();
+    public void decrementMaterials(int compID, int al, int st, int gl, int rb) throws SQLException {
         String deductMats = "UPDATE CompanyInfo SET Aluminium = Aluminium - ?, Steel = Steel - ?, Glass = Glass - ?, Rubber = Rubber - ? WHERE id = ?";
         try {
             PreparedStatement dmSTatement = c.prepareStatement(deductMats);

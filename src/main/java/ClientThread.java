@@ -104,7 +104,6 @@ public class ClientThread extends Thread {
                 int sellPrice = Integer.parseInt(details.get("sellPrice").toString().substring(0, details.get("sellPrice").toString().length()-2));
                 int completionTime = Integer.parseInt(details.get("completionTime").toString().substring(0, details.get("completionTime").toString().length()-2));
                 int mechanics = Integer.parseInt(details.get("mechanics").toString().substring(0, details.get("mechanics").toString().length()-2));
-                System.out.println(mechanics);
                 d.startCarBuild(companyId, startTime, sellPrice, completionTime, mechanics);
                 break;
             }
@@ -147,25 +146,18 @@ public class ClientThread extends Thread {
                 break;
             }
             case "0011":{
-                HashMap details = ParseJson(data);
-                int compID = Integer.parseInt(details.get("CompanyId").toString());
-                int carsToSell = Integer.parseInt(details.get("numberToSell").toString());
+                HashMap<String, String> details = ParseJson(data);
+                System.out.println(details.keySet());
+                System.out.println(details.values());
+                int compID = Integer.parseInt(details.get("CompanyId"));
+                int carsToSell = Integer.parseInt(details.get("numberToSell"));
                 d.sellCars(compID, carsToSell);
             }
-            case "0012":{
-                HashMap details = ParseJson(data);
-                System.out.println(details.keySet());
-                int compID = Integer.parseInt(details.get("CompanyId").toString());
-                out.write(d.getLastCarSold(compID).getBytes(StandardCharsets.UTF_8));
-            }
-            case "0013":{
+            case "0014":{
                 HashMap details = ParseJson(data);
                 int compID = Integer.parseInt(details.get("CompanyId").toString());
-                int alum = Integer.parseInt(details.get("aluminium").toString());
-                int steel = Integer.parseInt(details.get("steel").toString());
-                int glass = Integer.parseInt(details.get("glass").toString());
-                int rubber = Integer.parseInt(details.get("rubber").toString());
-                d.decrementMaterials(compID, alum, steel, glass, rubber);
+                int xp = Integer.parseInt(details.get("xp").toString());
+                d.incrementXP(compID, xp);
             }
             case "5000": {
                 HashMap EmployeeDetails = ParseJson(receivedData[1]);
