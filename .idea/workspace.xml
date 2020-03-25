@@ -1,7 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="AutoworldJavaServer:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_azure_adal4j_1_0_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_azure_azure_core_0_9_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_azure_azure_keyvault_0_9_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_microsoft_sqlserver_mssql_jdbc_6_1_0_jre8.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nimbusds_lang_tag_1_4.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nimbusds_nimbus_jose_jwt_3_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_nimbusds_oauth2_oidc_sdk_4_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_jersey_jersey_client_1_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_jersey_jersey_core_1_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_jersey_jersey_json_1_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_xml_bind_jaxb_impl_2_2_3_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_lang_commons_lang_2_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_activation_activation_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_inject_javax_inject_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_mail_mail_1_4_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_xml_bind_jaxb_api_2_2_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__javax_xml_stream_stax_api_1_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_jcip_jcip_annotations_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_json_smart_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_3_6.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_3_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_bouncycastle_bcprov_jdk15on_1_51.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_core_asl_1_9_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_jaxrs_1_9_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_mapper_asl_1_9_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_xc_1_9_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jettison_jettison_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_5.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__stax_stax_api_1_0_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoworldJavaServer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoworldJavaServer.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
@@ -72,7 +107,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.23448277" />
     <property name="restartRequiresConfirmation" value="false" />
@@ -84,7 +119,7 @@
       <recent name="E:\Software_Projects\AutoworldJavaServer\src\main\java\JavaBean" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JAR Application.autoworld">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="AutoworldJavaServer" />
@@ -112,6 +147,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="autoworld" type="JarApplication">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/out/artifacts/AutoworldJavaServer_jar/AutoworldJavaServer.jar" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="BuildArtifacts" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.SQLiteJDBC" />
+      <item itemvalue="Application.TestSocket" />
+      <item itemvalue="JAR Application.autoworld" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
@@ -188,6 +237,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
+    <state x="507" y="273" key="#BuildArtifactsBeforeRunChooser" timestamp="1585158027327">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="507" y="273" key="#BuildArtifactsBeforeRunChooser/0.23.1440.877@0.23.1440.877" timestamp="1585158027327" />
     <state x="320" y="127" key="#SQL_Dialects" timestamp="1584839170791">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -196,14 +249,18 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="458" y="234" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.23.1440.877@0.23.1440.877" timestamp="1584119923276" />
-    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585150298983">
+    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585158909496">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877@0.23.1440.877" timestamp="1585150298983" />
+    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877@0.23.1440.877" timestamp="1585158909496" />
     <state x="553" y="343" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog" timestamp="1585150595292">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="553" y="343" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog/0.23.1440.877@0.23.1440.877" timestamp="1585150595292" />
+    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1585158791140">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog/0.23.1440.877@0.23.1440.877" timestamp="1585158791140" />
     <state x="569" y="357" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585140368331">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -216,25 +273,29 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1585138389638" />
-    <state width="1398" height="286" key="GridCell.Tab.0.bottom" timestamp="1585153463076">
+    <state width="1398" height="286" key="GridCell.Tab.0.bottom" timestamp="1585158925407">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1585153463076" />
-    <state width="1398" height="286" key="GridCell.Tab.0.center" timestamp="1585153463075">
+    <state width="1398" height="286" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1585158925407" />
+    <state width="1398" height="286" key="GridCell.Tab.0.center" timestamp="1585158925406">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1585153463075" />
-    <state width="1398" height="286" key="GridCell.Tab.0.left" timestamp="1585153463075">
+    <state width="1398" height="286" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1585158925406" />
+    <state width="1398" height="286" key="GridCell.Tab.0.left" timestamp="1585158925406">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1585153463075" />
-    <state width="1398" height="286" key="GridCell.Tab.0.right" timestamp="1585153463075">
+    <state width="1398" height="286" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1585158925406" />
+    <state width="1398" height="286" key="GridCell.Tab.0.right" timestamp="1585158925407">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1585153463075" />
-    <state x="221" y="63" key="SettingsEditor" timestamp="1585153661723">
+    <state width="1398" height="286" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1585158925407" />
+    <state x="83" y="61" width="1157" height="837" key="SettingsEditor" timestamp="1585158884818">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="221" y="63" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585153661723" />
+    <state x="83" y="61" width="1157" height="837" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585158884818" />
+    <state x="385" y="213" key="search.everywhere.popup" timestamp="1585157943918">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="385" y="213" key="search.everywhere.popup/0.23.1440.877@0.23.1440.877" timestamp="1585157943918" />
   </component>
 </project>
