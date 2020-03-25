@@ -654,8 +654,8 @@ public class DataBridge {
         }
     }
 
-    private void decrementFunds(int companyID, int amount){
-        String updateFunds = "UPDATE CompanyInfo SET Funds = Funds - ?, Costs = Costs + ? WHERE id = ?";
+    private void incrementFundsLoan(int companyID, int amount){
+        String updateFunds = "UPDATE CompanyInfo SET Funds = Funds + ?, Costs = Costs + ? WHERE id = ?";
         try {
             PreparedStatement statement = c.prepareStatement(updateFunds);
             statement.setInt(1, amount); statement.setInt(2, amount); statement.setInt(3, companyID);
@@ -664,17 +664,13 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
-    public void decrementMaterials(int compID, int al, int st, int gl, int rb) throws SQLException {
-        String deductMats = "UPDATE CompanyInfo SET Aluminium = Aluminium - ?, Steel = Steel - ?, Glass = Glass - ?, Rubber = Rubber - ? WHERE id = ?";
+    private void decrementFunds(int companyID, int amount){
+        String updateFunds = "UPDATE CompanyInfo SET Funds = Funds - ?, Costs = Costs + ? WHERE id = ?";
         try {
-            PreparedStatement dmSTatement = c.prepareStatement(deductMats);
-            dmSTatement.setInt(1, al);
-            dmSTatement.setInt(2, st);
-            dmSTatement.setInt(3, gl);
-            dmSTatement.setInt(4, rb);
-            dmSTatement.setInt(5, compID);
-            dmSTatement.executeUpdate();
-        } catch (SQLException e) {
+            PreparedStatement statement = c.prepareStatement(updateFunds);
+            statement.setInt(1, amount); statement.setInt(2, amount); statement.setInt(3, companyID);
+            statement.executeUpdate();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -783,7 +779,6 @@ public class DataBridge {
 
         return new Gson().toJson(playerInfo);
     }
-
     public String changeConfidence(int compID) throws SQLException {
         connectToDb();
         String getConsumerConfidence = "SELECT ConsumerConfidence FROM CompanyInfo WHERE id = ?";
@@ -841,7 +836,6 @@ public class DataBridge {
         }
 
     }
-
     private int getMonthEndings(int month, int year){
         int day = 0;
         if(month == 2){
@@ -875,7 +869,6 @@ public class DataBridge {
 
         return day;
     }
-
     private String GetDate(String date, int i){
         String[] splitDate = date.split("-");
         int year = Integer.parseInt(splitDate[0]);
@@ -903,7 +896,6 @@ public class DataBridge {
         String checkDate = Integer.toString(year) + "-" + monthFormat + "-" + dayFormat;
         return checkDate;
     }
-
     public String GetSoldRecords(String CompanyId, String chosenDate) throws SQLException {
         connectToDb();
         HashMap<String, HashMap<String, String>> graphInfo = new HashMap<>();
@@ -935,7 +927,6 @@ public class DataBridge {
         }
         return new Gson().toJson(graphInfo);
     }
-
     public void AddLoan(int CompanyId, int loanAmount) throws SQLException {
         String addLoan = "UPDATE CompanyInfo SET LoanAmount = LoanAmount + ? WHERE id = ?";
         connectToDb();
@@ -944,6 +935,7 @@ public class DataBridge {
             stmt.setInt(1, loanAmount);
             stmt.setInt(2, CompanyId);
             stmt.executeUpdate();
+            incrementFundsLoan(CompanyId, loanAmount);
             c.close();
         }
         catch (Exception ex){
@@ -952,7 +944,6 @@ public class DataBridge {
         }
 
     }
-
     public void EndGame(String CompanyId) throws SQLException {
         String deleteCarSales = "DELETE FROM CarSales WHERE CompanyId = ?";
         String deleteCarBuilding = "DELETE FROM CarsBuilding WHERE CompanyId = ?";

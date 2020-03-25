@@ -25,7 +25,6 @@ public class DiscoveryNews
         queryBuilder.naturalLanguageQuery("autonomous car");
         queryBuilder.filter("text:autonomous car");
         QueryResponse queryResponse = discovery.query(queryBuilder.build()).execute().getResult();
-        System.out.println(queryResponse.toString());
         return makeTitleAndUrlJsonArray(queryResponse.toString()).getBytes(StandardCharsets.UTF_8);
     }
 
