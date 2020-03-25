@@ -4,8 +4,11 @@
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoWorldDb.db" beforeDir="false" afterPath="$PROJECT_DIR$/AutoWorldDb.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/IBM/DiscoveryNews.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/IBM/DiscoveryNews.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/IBM/ToneAnalyser.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/AutoworldJavaServer.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MTSock.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,6 +200,14 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="458" y="234" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.23.1440.877@0.23.1440.877" timestamp="1584119923276" />
+    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585150298983">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="184" y="123" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.1440.877@0.23.1440.877" timestamp="1585150298983" />
+    <state x="553" y="343" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog" timestamp="1585150595292">
+      <screen x="0" y="23" width="1440" height="877" />
+    </state>
+    <state x="553" y="343" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog/0.23.1440.877@0.23.1440.877" timestamp="1585150595292" />
     <state x="569" y="357" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585140368331">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -209,25 +220,25 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="139" y="165" width="1440" height="877" maximized="true" key="DiffContextDialog/0.23.1440.877@0.23.1440.877" timestamp="1585138389638" />
-    <state width="1398" height="286" key="GridCell.Tab.0.bottom" timestamp="1585141552579">
+    <state width="1398" height="286" key="GridCell.Tab.0.bottom" timestamp="1585151047055">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1585141552579" />
-    <state width="1398" height="286" key="GridCell.Tab.0.center" timestamp="1585141552578">
+    <state width="1398" height="286" key="GridCell.Tab.0.bottom/0.23.1440.877@0.23.1440.877" timestamp="1585151047055" />
+    <state width="1398" height="286" key="GridCell.Tab.0.center" timestamp="1585151047054">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1585141552578" />
-    <state width="1398" height="286" key="GridCell.Tab.0.left" timestamp="1585141552578">
+    <state width="1398" height="286" key="GridCell.Tab.0.center/0.23.1440.877@0.23.1440.877" timestamp="1585151047054" />
+    <state width="1398" height="286" key="GridCell.Tab.0.left" timestamp="1585151047054">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1585141552578" />
-    <state width="1398" height="286" key="GridCell.Tab.0.right" timestamp="1585141552579">
+    <state width="1398" height="286" key="GridCell.Tab.0.left/0.23.1440.877@0.23.1440.877" timestamp="1585151047054" />
+    <state width="1398" height="286" key="GridCell.Tab.0.right" timestamp="1585151047055">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state width="1398" height="286" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1585141552579" />
-    <state x="221" y="100" key="SettingsEditor" timestamp="1584540940213">
+    <state width="1398" height="286" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1585151047055" />
+    <state x="221" y="63" key="SettingsEditor" timestamp="1585150597234">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="221" y="100" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1584540940213" />
+    <state x="221" y="63" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585150597234" />
   </component>
 </project>
