@@ -1,5 +1,6 @@
 package Database;
 
+import IBM.ToneAnalyser;
 import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
@@ -10,9 +11,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 
 public class DataBridge {
     Connection c = null;
@@ -29,7 +28,7 @@ public class DataBridge {
         connectToDb();
         try {
             Statement cmnd = c.createStatement();
-            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, EmployeeHappiness INTEGER, BrandLoyalty INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER, Aluminium INTEGER, Glass INTEGER, Steel INTEGER, Rubber INTEGER, LastCarSold VARCHAR )";
+            String q_createTableCompanyInfo = "CREATE TABLE IF NOT EXISTS CompanyInfo (id INTEGER PRIMARY KEY, Company VARCHAR, ConsumerConfidence INTEGER, Funds INTEGER, LoanAmount INTEGER, Revenue INTEGER, Costs INTEGER, CarsSold INTEGER, CompanyLevel INTEGER, XP INTEGER, Aluminium INTEGER, Glass INTEGER, Steel INTEGER, Rubber INTEGER, LastCarSold VARCHAR, LastNewsEvent VARCHAR, LastLoanInterest VARCHAR )";
             String q_createTablePlayerDetails = "CREATE TABLE IF NOT EXISTS PlayerDetails (id INTEGER PRIMARY KEY, CompanyId INTEGER, Email VARCHAR, Password CHAR(128), Salt VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createTableEmployees = "CREATE TABLE IF NOT EXISTS Employees (id INTEGER PRIMARY KEY, JobType VARCHAR, HourlyPay INTEGER)";
             String q_createTableEmployeeRecords = "CREATE TABLE IF NOT EXISTS EmployeeRecords(id INTEGER PRIMARY KEY, CompanyId INTEGER, EmployeeId INTEGER, Quantity INTEGER, MechsInUse INTEGER, LastPaid VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id), FOREIGN KEY(EmployeeId) REFERENCES Employees(id))";
@@ -58,12 +57,13 @@ public class DataBridge {
             c.close();
         }
         catch (Exception e){
+            System.out.println(e.getMessage());
             c.close();
         }
     }
     public boolean WritePlayer(String emailstr, String companystr, String password, String salt) throws SQLException {
         connectToDb();
-        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, EmployeeHappiness, BrandLoyalty, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber, LastCarSold ) VALUES (?, 0, 0, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, ?)";
+        String InitialiseCompanyDetailsstmt = "INSERT INTO CompanyInfo (Company, ConsumerConfidence, Funds, LoanAmount, Revenue, Costs, CarsSold, CompanyLevel, XP, Aluminium, Glass, Steel, Rubber, LastCarSold, LastNewsEvent, LastLoanInterest ) VALUES (?, 5, 10000, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, ?, ?, ?)";
         String GetCompanyIdstmt = "SELECT id FROM CompanyInfo WHERE Company = ?";
         String InitialisePlayerDetailsstmt = "INSERT INTO PlayerDetails (CompanyId, Email, Password, Salt) VALUES (?, ?, ?, ?)";
         String InitialiseEmployeesstmt = "INSERT INTO EmployeeRecords (CompanyId, EmployeeId, Quantity, MechsInUse, LastPaid) VALUES (?, ?, 0, 0, ?)";
@@ -76,6 +76,8 @@ public class DataBridge {
             PreparedStatement pstmt = c.prepareStatement(InitialiseCompanyDetailsstmt);
             pstmt.setString(1, companystr);
             pstmt.setString(2, formattedDate);
+            pstmt.setString(3, formattedDate);
+            pstmt.setString(4, formattedDate);
             pstmt.executeUpdate(); //Initialise Company Details
 
             PreparedStatement stmt  = c.prepareStatement(GetCompanyIdstmt);
@@ -335,6 +337,7 @@ public class DataBridge {
             updateLastPaidStatement.executeUpdate();
 
             decrementFunds(compID, payAmount);
+            AddPaymentRecord(compID, payAmount);
         } catch (Exception e){
             System.out.println(e.getMessage());
         } finally {
@@ -345,14 +348,16 @@ public class DataBridge {
         connectToDb();
         String numberOfAvailableCars = "SELECT count(*) FROM CarsInventory WHERE CompanyId = ?";
         String getAvailableCarsFromStock = "SELECT * FROM CarsInventory WHERE CompanyId = ? ORDER BY id ASC LIMIT ?";
-        String inserIntoSoldCars = "INSERT INTO CarSales (CompanyId, CarValue, SaleDate) VALUES (?, ?, ?)";
+        String insertIntoSoldCars = "INSERT INTO CarSales (CompanyId, CarValue, SaleDate) VALUES (?, ?, ?)";
         String updateLastSold = "UPDATE CompanyInfo SET LastCarSold = ? WHERE id = ?";
         String deleteRowsFromInventory = "DELETE FROM CarsInventory WHERE id = ?";
         String increaseCarsSold = "UPDATE CompanyInfo SET CarsSold = CarsSold + ? WHERE id = ?";
 
         LocalDateTime myDateObj = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = myDateObj.format(myFormatObj);
+        String formatCorrectDate = myDateObj.format(formatObj);
         try {
             PreparedStatement availCarsStatement = c.prepareStatement(numberOfAvailableCars);
             availCarsStatement.setInt(1, compID);
@@ -365,7 +370,7 @@ public class DataBridge {
             if(carsToRemove>0){
 
                 PreparedStatement removeFromStockStatement = c.prepareStatement(getAvailableCarsFromStock);
-                PreparedStatement insertIntoSoldCarsStatement = c.prepareStatement(inserIntoSoldCars);
+                PreparedStatement insertIntoSoldCarsStatement = c.prepareStatement(insertIntoSoldCars);
 
                 removeFromStockStatement.setInt(1, compID);
                 removeFromStockStatement.setInt(2, carsToRemove);
@@ -375,7 +380,7 @@ public class DataBridge {
                 while (soldCarsSet.next()){
                     insertIntoSoldCarsStatement.setInt(1, compID);
                     insertIntoSoldCarsStatement.setInt(2, soldCarsSet.getInt("CarValue"));
-                    insertIntoSoldCarsStatement.setString(3, formattedDate);
+                    insertIntoSoldCarsStatement.setString(3, formatCorrectDate);
                     insertIntoSoldCarsStatement.executeUpdate();
                     incrementFunds(compID, soldCarsSet.getInt("CarValue"));
                     idsToDelete[index] = soldCarsSet.getInt("id");
@@ -451,26 +456,26 @@ public class DataBridge {
 
             String companyID = companyResultSet.getString(1);
             String companyName = companyResultSet.getString(2); // company name
-            String empHappiness =  companyResultSet.getString(3); // employee happ
-            String brandLoyalty = companyResultSet.getString(4); // brand loyalty
-            String funds = companyResultSet.getString(5); // funds
-            String loans = companyResultSet.getString(6); // loans
-            String revenue = companyResultSet.getString(7); // revenue
-            String costs = companyResultSet.getString(8); // costs
-            String carsSold = companyResultSet.getString(9); // cars sold
-            String currentLevel = companyResultSet.getString((10)); // level
-            String xp = companyResultSet.getString(11); // xp
-            String aluminium = companyResultSet.getString(12); // steel stock
-            String glass = companyResultSet.getString(13); // glass stock
-            String steel = companyResultSet.getString(14); // steel stock
-            String rubber = companyResultSet.getString(15); // rubber stock
-            String LastCarSold = companyResultSet.getString(16); // lcs;
+            String brandLoyalty = companyResultSet.getString(3); // confidence
+            String funds = companyResultSet.getString(4); // funds
+            String loans = companyResultSet.getString(5); // loans
+            String revenue = companyResultSet.getString(6); // revenue
+            String costs = companyResultSet.getString(7); // costs
+            String carsSold = companyResultSet.getString(8); // cars sold
+            String currentLevel = companyResultSet.getString((9)); // level
+            String xp = companyResultSet.getString(10); // xp
+            String aluminium = companyResultSet.getString(11); // steel stock
+            String glass = companyResultSet.getString(12); // glass stock
+            String steel = companyResultSet.getString(13); // steel stock
+            String rubber = companyResultSet.getString(14); // rubber stock
+            String LastCarSold = companyResultSet.getString(15); // lcs;
+            String LastNewsEvent = companyResultSet.getString(16); // last news event
+            String LastInterestPayment = companyResultSet.getString(17); // last time ineterest acrewed
 
             HashMap<String, String> companyDetailsMap = new HashMap<>();
             companyDetailsMap.put("Company Name", companyName);
             companyDetailsMap.put("Company ID", companyID);
-            companyDetailsMap.put("Employee Happiness", empHappiness);
-            companyDetailsMap.put("Brand Loyalty", brandLoyalty);
+            companyDetailsMap.put("Confidence", brandLoyalty);
             companyDetailsMap.put("Funds", funds);
             companyDetailsMap.put("Loans", loans);
             companyDetailsMap.put("Revenue", revenue);
@@ -484,6 +489,8 @@ public class DataBridge {
             companyDetailsMap.put("Steel", steel);
             companyDetailsMap.put("Rubber", rubber);
             companyDetailsMap.put("Last Car Sold", LastCarSold);
+            companyDetailsMap.put("Last News Event", LastNewsEvent);
+            companyDetailsMap.put("Last Interest Payment", LastInterestPayment);
 
             c.close();
             return new Gson().toJson(companyDetailsMap);
@@ -514,7 +521,6 @@ public class DataBridge {
             System.out.println(ex.getMessage());
         }
         return EmployeeDetails;
-
     }
     public String GetEmployeeRecords(int companyId) throws SQLException {
         HashMap<Integer, String[]> EmployeeDetails = GetEmployeeInfo();
@@ -570,7 +576,7 @@ public class DataBridge {
             stmt.executeUpdate();
 
             decrementFunds(companyId, employeePay);
-
+            AddPaymentRecord(companyId, employeePay);
             c.close();
 
 
@@ -598,6 +604,45 @@ public class DataBridge {
             return "Failed to get employee last paid";
         }
     }
+
+    private void AddPaymentRecord(int companyId, int amount) throws SQLException {
+        String insertRecord = "INSERT INTO MaterialRecords(CompanyId, MaterialName, Price, Quantity, SaleDate) Values(?, 'Salary Payments', ?, 1, ?)";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
+        String saleDate = formatter.format(today);
+        connectToDb();
+        try{
+            PreparedStatement stmt = c.prepareStatement(insertRecord);
+            stmt.setInt(1, companyId);
+            stmt.setInt(2, amount);
+            stmt.setString(3, saleDate);
+            stmt.executeUpdate();
+            c.close();
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            c.close();
+        }
+    }
+    public void applyInterest(int compID, int amount) throws SQLException {
+        connectToDb();
+        try {
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            String updateInterestPaidDate = "UPDATE CompanyInfo SET LastLoanInterest = ? WHERE id = ?";
+            PreparedStatement updateStatem = c.prepareStatement(updateInterestPaidDate);
+            updateStatem.setString(1, formattedDate);
+            updateStatem.setInt(2, compID);
+            updateStatem.executeUpdate();
+            decrementFunds(compID, amount);
+            c.close();
+        } catch (Exception e){
+            c.close();
+            System.out.println(e.getMessage());
+        }
+    }
     private void incrementFunds(int companyID, int amount){
         String updateFunds = "UPDATE CompanyInfo SET Funds = Funds + ?, Revenue = Revenue + ? WHERE id = ?";
         try {
@@ -608,6 +653,7 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
+
     private void decrementFunds(int companyID, int amount){
         String updateFunds = "UPDATE CompanyInfo SET Funds = Funds - ?, Costs = Costs + ? WHERE id = ?";
         try {
@@ -736,6 +782,216 @@ public class DataBridge {
         }
 
         return new Gson().toJson(playerInfo);
+    }
+
+    public String changeConfidence(int compID) throws SQLException {
+        connectToDb();
+        String getConsumerConfidence = "SELECT ConsumerConfidence FROM CompanyInfo WHERE id = ?";
+        String incrementConfidence = "UPDATE CompanyInfo SET ConsumerConfidence = ConsumerConfidence + 1 WHERE id = ?";
+        String decrementConfidence = "UPDATE CompanyInfo SET ConsumerConfidence = ConsumerConfidence - 1 WHERE id = ?";
+        String updateLastGameEvent = "UPDATE CompanyInfo SET LastNewsEvent = ? WHERE id = ?";
+        String toneString = new ToneAnalyser().confidenceScore();
+
+        HashMap<String, String> toneMap = new Gson().fromJson(toneString, HashMap.class);
+        int toneChange = Integer.parseInt(toneMap.get("change"));
+        System.out.println(toneChange);
+
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String formattedDate = myDateObj.format(myFormatObj);
+
+        try{
+            PreparedStatement updateLasteventst = c.prepareStatement(updateLastGameEvent);
+            updateLasteventst.setString(1, formattedDate);
+            updateLasteventst.setInt(2, compID);
+
+            if(toneChange==0){
+                updateLasteventst.executeUpdate();
+                return toneString;
+            }
+
+            PreparedStatement getConsumerConfidenceStatement = c.prepareStatement(getConsumerConfidence);
+            getConsumerConfidenceStatement.setInt(1, compID);
+            ResultSet consumerConfInt = getConsumerConfidenceStatement.executeQuery();
+            int conf = 0;
+            while (consumerConfInt.next()){
+                conf = consumerConfInt.getInt("ConsumerConfidence");
+            }
+            if(toneChange==1){
+                if(conf < 10){
+                    PreparedStatement increseConfidence = c.prepareStatement(incrementConfidence);
+                    increseConfidence.setInt(1, compID);
+                    increseConfidence.executeUpdate();
+                }
+            }
+            if(toneChange==-1){
+                if(conf>0){
+                    PreparedStatement decreaseCOnf = c.prepareStatement(decrementConfidence);
+                    decreaseCOnf.setInt(1, compID);
+                    decreaseCOnf.executeUpdate();
+                }
+            }
+            updateLasteventst.executeUpdate();
+            c.close();
+            return toneString;
+        } catch (Exception e){
+            c.close();
+            System.out.println(e.getMessage());
+            return "Failed to get tone or something";
+        }
+
+    }
+
+    private int getMonthEndings(int month, int year){
+        int day = 0;
+        if(month == 2){
+            if (year % 4 == 0){
+                day = 29;
+            }
+            else{
+                day = 28;
+            }
+        }
+        else{
+            switch(month % 2){
+                case 1:
+                    if (month <= 7){
+                        day = 31;
+                    }
+                    else{
+                        day = 30;
+                    }
+                    break;
+                case 0:
+                    if (month <= 7){
+                        day = 30;
+                    }
+                    else{
+                        day = 31;
+                    }
+                    break;
+            }
+        }
+
+        return day;
+    }
+
+    private String GetDate(String date, int i){
+        String[] splitDate = date.split("-");
+        int year = Integer.parseInt(splitDate[0]);
+        int month = Integer.parseInt(splitDate[1]);
+        int day = Integer.parseInt(splitDate[2]);
+        day = day - i;
+        if (day <= 0){
+            month -= 1;
+            if (month <= 0){
+                year -= 1;
+                month = 12;
+            }
+            int monthEnding = getMonthEndings(month, year);
+            day = monthEnding - (day * -1);
+        }
+        String dayFormat = Integer.toString(day);
+        String monthFormat = Integer.toString(month);
+        if (dayFormat.length() == 1){
+            dayFormat = "0" + dayFormat;
+        }
+        if (monthFormat.length() == 1){
+            monthFormat = "0" + monthFormat;
+        }
+
+        String checkDate = Integer.toString(year) + "-" + monthFormat + "-" + dayFormat;
+        return checkDate;
+    }
+
+    public String GetSoldRecords(String CompanyId, String chosenDate) throws SQLException {
+        connectToDb();
+        HashMap<String, HashMap<String, String>> graphInfo = new HashMap<>();
+        try {
+            int NoOfDays = 10;
+            for (int i = 0; i < NoOfDays; i++){
+                String SelectUserstmt = "SELECT CarValue FROM CarSales where SaleDate = ? AND CompanyId = ?";
+                String date = GetDate(chosenDate, i);
+                PreparedStatement stmt  = c.prepareStatement(SelectUserstmt);
+                stmt.setString(1, date);
+                stmt.setInt(2, Integer.parseInt(CompanyId));
+                ResultSet rs = stmt.executeQuery();
+                HashMap<String, String> details = new HashMap<>();
+                int TotalValue = 0;
+                int NoOfCars = 0;
+                // loop through the result set
+                while (rs.next()) {
+                    TotalValue += rs.getInt("CarValue");
+                    NoOfCars += 1;
+                }
+                details.put("totalValue", Integer.toString(TotalValue));
+                details.put("carsSold", Integer.toString(NoOfCars));
+                graphInfo.put(date, details);
+            }
+            c.close();
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+        return new Gson().toJson(graphInfo);
+    }
+
+    public void AddLoan(int CompanyId, int loanAmount) throws SQLException {
+        String addLoan = "UPDATE CompanyInfo SET LoanAmount = LoanAmount + ? WHERE id = ?";
+        connectToDb();
+        try{
+            PreparedStatement stmt = c.prepareStatement(addLoan);
+            stmt.setInt(1, loanAmount);
+            stmt.setInt(2, CompanyId);
+            stmt.executeUpdate();
+            c.close();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            c.close();
+        }
+
+    }
+
+    public void EndGame(String CompanyId) throws SQLException {
+        String deleteCarSales = "DELETE FROM CarSales WHERE CompanyId = ?";
+        String deleteCarBuilding = "DELETE FROM CarsBuilding WHERE CompanyId = ?";
+        String deleteCarInventory = "DELETE FROM CarsInventory WHERE CompanyId = ?";
+        String deleteEmployeeRecords = "DELETE FROM EmployeeRecords WHERE CompanyId = ?";
+        String deleteMaterialRecords = "DELETE FROM MaterialRecords WHERE CompanyId = ?";
+        String deletePlayerDetails = "DELETE FROM PlayerDetails WHERE CompanyId = ?";
+        String deleteCompanyInfo = "DELETE FROM CompanyInfo WHERE CompanyId = ?";
+        int id = Integer.parseInt(CompanyId);
+        connectToDb();
+        try{
+            PreparedStatement stmt = c.prepareStatement(deleteCarSales);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deleteCarBuilding);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deleteCarInventory);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deleteEmployeeRecords);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deleteMaterialRecords);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deletePlayerDetails);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            stmt = c.prepareStatement(deleteCompanyInfo);
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            c.close();
+        }
+        catch (Exception ex){
+            c.close();
+            System.out.println(ex.getMessage());
+        }
+
     }
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String input = password + salt;

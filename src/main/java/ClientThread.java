@@ -1,5 +1,6 @@
 import Database.DataBridge;
 import IBM.DiscoveryNews;
+import IBM.ToneAnalyser;
 import com.google.gson.Gson;
 
 import java.io.DataInputStream;
@@ -9,6 +10,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -152,12 +155,27 @@ public class ClientThread extends Thread {
                 int compID = Integer.parseInt(details.get("CompanyId"));
                 int carsToSell = Integer.parseInt(details.get("numberToSell"));
                 d.sellCars(compID, carsToSell);
+                break;
             }
             case "0014":{
                 HashMap details = ParseJson(data);
                 int compID = Integer.parseInt(details.get("CompanyId").toString());
                 int xp = Integer.parseInt(details.get("xp").toString());
                 d.incrementXP(compID, xp);
+                break;
+            }
+            case "0015":{
+                HashMap details = ParseJson(data);
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                out.write(d.changeConfidence(compID).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "0016": {
+                HashMap details = ParseJson(data);
+                int amount = Integer.parseInt(details.get("interest").toString());
+                int compID = Integer.parseInt(details.get("CompanyId").toString());
+                d.applyInterest(compID, amount);
+                break;
             }
             case "5000": {
                 HashMap EmployeeDetails = ParseJson(receivedData[1]);
@@ -194,10 +212,12 @@ public class ClientThread extends Thread {
                 int companyId = Integer.parseInt(Details.get("CompanyId").toString());
                 String input = d.GetMaterialRecords(companyId);
                 out.write(input.getBytes(StandardCharsets.UTF_8));
+                break;
             }
             case "5007":{
                 String Records = d.GetPlayerRankings();
                 out.write(Records.getBytes(StandardCharsets.UTF_8));
+                break;
             }
             case "5008":{
                 HashMap Details = ParseJson(receivedData[1]);
@@ -205,6 +225,7 @@ public class ClientThread extends Thread {
                 String company = Details.get("company").toString();
                 String input = d.CheckInputExists(email, company);
                 out.write(input.getBytes(StandardCharsets.UTF_8));
+                break;
             }
             case "5009":{
                 HashMap Details = ParseJson(receivedData[1]);
@@ -214,6 +235,30 @@ public class ClientThread extends Thread {
                 String salt = Details.get("salt").toString();
                 String input = d.UpdatePassword(email, oldPassword, password, salt);
                 out.write(input.getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "5010":{
+                HashMap Details = ParseJson(receivedData[1]);
+                String CompanyId = Details.get("CompanyId").toString();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate today = LocalDate.now();
+                String date = formatter.format(today);
+                String input = d.GetSoldRecords(CompanyId, date);
+                out.write(input.getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            case "5011":{
+                HashMap Details = ParseJson(receivedData[1]);
+                String CompanyId = Details.get("CompanyId").toString();
+                d.EndGame(CompanyId);
+                break;
+            }
+            case "5012":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int CompanyId = Integer.parseInt(Details.get("CompanyId").toString());
+                int addLoan = Integer.parseInt(Details.get("LoanAmount").toString());
+                d.AddLoan(CompanyId, addLoan);
+                break;
             }
             default:
                 break;
