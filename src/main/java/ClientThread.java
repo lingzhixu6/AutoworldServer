@@ -260,6 +260,25 @@ public class ClientThread extends Thread {
                 d.AddLoan(CompanyId, addLoan);
                 break;
             }
+            case "5013":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int CompanyId = Integer.parseInt(Details.get("CompanyId").toString());
+                String EmployeeType = Details.get("EmployeeType").toString();
+                d.DecrementEmployees(CompanyId, EmployeeType);
+                break;
+            }
+            case "5014":{
+                HashMap Details = ParseJson(receivedData[1]);
+                int CompanyId = Integer.parseInt(Details.get("CompanyId").toString());
+                String Message = Details.get("Message").toString();
+                d.SendMessage(CompanyId, Message);
+                break;
+            }
+            case "5015":{
+                String input = d.GetMessages();
+                out.write(input.getBytes(StandardCharsets.UTF_8));
+                break;
+            }
             default:
                 break;
         }

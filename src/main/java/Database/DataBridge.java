@@ -36,6 +36,7 @@ public class DataBridge {
             String q_createCurrentlyBuildingCars = "CREATE TABLE IF NOT EXISTS CarsBuilding (id INTEGER PRIMARY KEY, CompanyId INTEGER, StartTime VARCHAR, SellPrice INTEGER, TimeToComplete INTEGER, MechsUsed INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createCarStock = "CREATE TABLE IF NOT EXISTS CarsInventory (id INTEGER PRIMARY KEY, CompanyId INTEGER, CarValue INTEGER, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
             String q_createCarSales = "CREATE TABLE IF NOT EXISTS CarSales (id INTEGER PRIMARY KEY, CompanyId INTEGER, CarValue INTEGER, SaleDate VARCHAR, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
+            String q_createTableMessages = "CREATE TABLE IF NOT EXISTS Messages (id INTEGER PRIMARY KEY, CompanyId INTEGER, Message VARCHAR, DateSent TEXT, FOREIGN KEY(CompanyId) REFERENCES CompanyInfo(id))";
 
             cmnd.execute(q_createTableCompanyInfo);
             cmnd.execute(q_createTablePlayerDetails);
@@ -44,6 +45,7 @@ public class DataBridge {
             cmnd.execute(q_createCurrentlyBuildingCars);
             cmnd.execute(q_createCarStock);
             cmnd.execute(q_createCarSales);
+            cmnd.execute(q_createTableMessages);
 
             String q_insertMechanic = "INSERT INTO Employees(JobType, HourlyPay) SELECT 'Mechanic', 50 WHERE NOT EXISTS(SELECT * FROM Employees WHERE JobType = 'Mechanic')";
             String q_insertEngineer = "INSERT INTO Employees(JobType, HourlyPay) SELECT 'Engineer', 200 WHERE NOT EXISTS(SELECT * FROM Employees WHERE JobType = 'Engineer')";
@@ -112,6 +114,33 @@ public class DataBridge {
             System.out.println(ex.getMessage());
             c.close();
             return false;
+        }
+    }
+
+    public void DecrementEmployees(int CompanyId, String EmployeeType) throws SQLException {
+        connectToDb();
+        String IncrementQuantitystmt = "UPDATE EmployeeRecords SET Quantity = Quantity - 1 WHERE CompanyId = ? AND EmployeeId = ?";
+        String GetEmployeeId = "SELECT id FROM Employees WHERE JobType = ?";
+
+        try {
+            int EmployeeId = 0;
+            PreparedStatement Employeestmt = c.prepareStatement(GetEmployeeId);
+            Employeestmt.setString(1, EmployeeType);
+            ResultSet ResultSet = Employeestmt.executeQuery();
+            while(ResultSet.next()){
+                EmployeeId = ResultSet.getInt("id");
+            }
+            // Read and print all values in table
+            PreparedStatement stmt  = c.prepareStatement(IncrementQuantitystmt);
+            stmt.setInt(1, CompanyId);
+            stmt.setInt(2, EmployeeId);
+            stmt.executeUpdate();
+            c.close();
+
+
+        } catch (Exception ex) {
+            c.close();
+            System.out.println(ex.getMessage());
         }
     }
     public String CheckInputExists(String email, String company) throws SQLException {
@@ -984,6 +1013,52 @@ public class DataBridge {
         }
 
     }
+
+
+    public void SendMessage(int CompanyId, String Message) throws SQLException {
+        String sqlstmt = "INSERT INTO Messages(CompanyId, Message, DateSent) Values(?, ?, ?)";
+        connectToDb();
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM");
+            LocalDate today = LocalDate.now();
+            String dateSent = formatter.format(today);
+            PreparedStatement stmt = c.prepareStatement(sqlstmt);
+            stmt.setInt(1, CompanyId);
+            stmt.setString(2, Message);
+            stmt.setString(3, dateSent);
+            stmt.executeUpdate();
+            c.close();
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            c.close();
+        }
+    }
+
+    public String GetMessages() throws SQLException {
+        String sqlstmt = "SELECT Messages.id as id, CompanyInfo.Company as CompanyName, Messages.Message as Message, Messages.DateSent as DateSent FROM Messages INNER JOIN CompanyInfo ON Messages.CompanyId = CompanyInfo.id";
+        connectToDb();
+        HashMap<String, String[]> messages = new HashMap<>();
+        try {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sqlstmt);
+            while(rs.next()){
+                String id = Integer.toString(rs.getInt("id"));
+                String company = rs.getString("CompanyName");
+                String message = rs.getString("Message");
+                String dateSent = rs.getString("DateSent");
+                String[] details = {company, message, dateSent};
+                messages.put(id, details);
+            }
+            c.close();
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+            c.close();
+        }
+        return new Gson().toJson(messages);
+    }
+
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String input = password + salt;
         MessageDigest md = MessageDigest.getInstance("SHA-512");
