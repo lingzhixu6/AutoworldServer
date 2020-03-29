@@ -775,7 +775,9 @@ public class DataBridge {
                 input.append(rs.getString("SaleDate"));
                 input.append(",");
             }
-            input.deleteCharAt(input.length() - 1);
+            if(input.length()!=0){
+                input.deleteCharAt(input.length() - 1);
+            }
             c.close();
 
 

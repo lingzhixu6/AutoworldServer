@@ -7,9 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15951b63-5bbb-411d-b341-7f59cf8e00a0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/AutoworldJavaServer_jar/AutoWorldDb.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/artifacts/AutoworldJavaServer_jar/AutoworldJavaServer.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Database/DataBridge.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -228,10 +227,10 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="553" y="343" key="#com.intellij.framework.addSupport.AddSupportForSingleFrameworkDialog/0.23.1440.877@0.23.1440.877" timestamp="1585150595292" />
-    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1585406586630">
+    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1585503115089">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog/0.23.1440.877@0.23.1440.877" timestamp="1585406586630" />
+    <state x="470" y="272" key="#com.intellij.ide.util.TreeClassChooserDialog/0.23.1440.877@0.23.1440.877" timestamp="1585503115089" />
     <state x="569" y="357" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1585140368331">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -260,10 +259,10 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state width="1398" height="286" key="GridCell.Tab.0.right/0.23.1440.877@0.23.1440.877" timestamp="1585158925407" />
-    <state x="83" y="61" width="1157" height="837" key="SettingsEditor" timestamp="1585406615011">
+    <state x="83" y="61" width="1157" height="837" key="SettingsEditor" timestamp="1585503138016">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
-    <state x="83" y="61" width="1157" height="837" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585406615011" />
+    <state x="83" y="61" width="1157" height="837" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1585503138016" />
     <state x="385" y="213" key="search.everywhere.popup" timestamp="1585157943918">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
