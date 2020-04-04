@@ -203,7 +203,7 @@ public class ClientThread extends Thread {
             case "5005":{
                 HashMap Details = ParseJson(receivedData[1]);
                 int companyId = Integer.parseInt(Details.get("CompanyId").toString());
-                int repaymentAmount = Integer.parseInt(Details.get("LoanAmount").toString());
+                int repaymentAmount = Integer.parseInt(Details.get("RepayLoanAmount").toString());
                 d.RepayLoan(companyId, repaymentAmount);
                 break;
             }

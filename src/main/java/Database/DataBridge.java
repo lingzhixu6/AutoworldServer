@@ -116,7 +116,6 @@ public class DataBridge {
             return false;
         }
     }
-
     public void DecrementEmployees(int CompanyId, String EmployeeType) throws SQLException {
         connectToDb();
         String IncrementQuantitystmt = "UPDATE EmployeeRecords SET Quantity = Quantity - 1 WHERE CompanyId = ? AND EmployeeId = ?";
@@ -633,7 +632,6 @@ public class DataBridge {
             return "Failed to get employee last paid";
         }
     }
-
     private void AddPaymentRecord(int companyId, int amount) throws SQLException {
         String insertRecord = "INSERT INTO MaterialRecords(CompanyId, MaterialName, Price, Quantity, SaleDate) Values(?, 'Salary Payments', ?, 1, ?)";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -682,7 +680,6 @@ public class DataBridge {
             e.printStackTrace();
         }
     }
-
     private void incrementFundsLoan(int companyID, int amount){
         String updateFunds = "UPDATE CompanyInfo SET Funds = Funds + ?, Costs = Costs + ? WHERE id = ?";
         try {
@@ -1015,8 +1012,6 @@ public class DataBridge {
         }
 
     }
-
-
     public void SendMessage(int CompanyId, String Message) throws SQLException {
         String sqlstmt = "INSERT INTO Messages(CompanyId, Message, DateSent) Values(?, ?, ?)";
         connectToDb();
@@ -1036,7 +1031,6 @@ public class DataBridge {
             c.close();
         }
     }
-
     public String GetMessages() throws SQLException {
         String sqlstmt = "SELECT Messages.id as id, CompanyInfo.Company as CompanyName, Messages.Message as Message, Messages.DateSent as DateSent FROM Messages INNER JOIN CompanyInfo ON Messages.CompanyId = CompanyInfo.id";
         connectToDb();
@@ -1060,7 +1054,6 @@ public class DataBridge {
         }
         return new Gson().toJson(messages);
     }
-
     public static String Hash(String password, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String input = password + salt;
         MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -1068,5 +1061,4 @@ public class DataBridge {
         byte[] digest = md.digest(inputBytes);
         return Base64.getEncoder().encodeToString(digest);
     }
-
 }

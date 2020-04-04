@@ -18,9 +18,9 @@ import java.util.HashMap;
 
 public class ToneAnalyser {
     public String confidenceScore(){
-        IamAuthenticator authenticator = new IamAuthenticator("qxTJ9SSb03_7H4L5T8PWclKQ27zcaszKpf1WJOwP4uRL");
+        IamAuthenticator authenticator = new IamAuthenticator("agOP62AdPhzZre_dVKrg659S1vHDGyBnb-0YOSMaPACA");
         ToneAnalyzer toneAnalyzer = new ToneAnalyzer("2017-09-21", authenticator);
-        toneAnalyzer.setServiceUrl("https://api.eu-gb.tone-analyzer.watson.cloud.ibm.com/instances/5bf913d0-4c7c-4eb9-a179-e70c69dc318f");
+        toneAnalyzer.setServiceUrl("https://api.eu-gb.tone-analyzer.watson.cloud.ibm.com/instances/0b4291e6-c0ac-4f0a-9ed3-d8b37fa99fa7");
 
 //        DiscoveryNews d = new DiscoveryNews();
 //        Discovery discovery = new Discovery("2020-03-09");
